@@ -62,6 +62,7 @@ Flannelmouth Sucker,NA,TL,English,75,RLP,4,NA,-3.527,3.068,NA,Didenko et al. (20
 Flannelmouth Sucker,NA,TL,metric,75,RLP,100,NA,-5.18,3.068,NA,Didenko et al. (2004),none
 Flathead Catfish,NA,TL,English,75,RLP,5,NA,-3.661,3.23,NA,Bister et al. (2000),none
 Flathead Catfish,NA,TL,metric,75,RLP,130,NA,-5.542,3.23,NA,Bister et al. (2000),none
+Flier,NA,TL,metric,75,RLP,80,240,-5.013,3.141,NA,Bonvechio et al (2025),none
 Fourbarbel Scraper,NA,TL,metric,75,EmP,70,280,-6.743,4.768,-0.437,Emiroglu et al. (2020),only from Turkey
 Freshwater Drum,NA,TL,English,75,RLP,4,NA,-3.575,3.204,NA,Blackwell et al. (1995),none
 Freshwater Drum,NA,TL,metric,75,RLP,100,NA,-5.419,3.204,NA,Blackwell et al. (1995),none
@@ -89,6 +90,8 @@ Largemouth Bass,NA,TL,English,75,RLP,6,NA,-3.587,3.273,NA,Henson (1991),none
 Largemouth Bass,NA,TL,metric,75,RLP,150,NA,-5.528,3.273,NA,Henson (1991),none
 Largescale Sucker,NA,TL,English,75,EmP,6.75,25.25,-3.53066,3.12136,NA,Richter (2007),none
 Largescale Sucker,NA,TL,metric,75,EmP,170,640,-5.2586,3.12136,NA,Richter (2007),none
+Longear Sunfish,NA,TL,English,75,RLP,80,180,-3.2887,3.3114,,Miller et al. (2025),none
+Longear Sunfish,NA,TL,metric,75,RLP,80,180,5.2861,3.3127,,Miller et al. (2025),none
 Longnose Gar,NA,TL,English,75,RLP,8,NA,-4.623,3.449,NA,Bister et al. (2000),none
 Longnose Gar,NA,TL,metric,75,RLP,200,NA,-6.811,3.449,NA,Bister et al. (2000),none
 Marble Trout,NA,TL,metric,75,EmP,90,570,-5.208,3.202,-0.046,Lorenzoni et al. (2012),none

@@ -1,5 +1,5 @@
 # FSA 0.10.9000
-
+* `wSlit`: Added info for Flier and Longear Sunfish. This addresses [#100](https://github.com/fishR-Core-Team/FSA/issues/122)).
 
 # FSA 0.10.0
 * Updated `test-coverage.yaml` and moved a `# nocov start` and `# nocov end` in `bootstrap.r` to address the errors with `test-coverage.yaml`. Addresses [#118](https://github.com/fishR-Core-Team/FSA/issues/118).
