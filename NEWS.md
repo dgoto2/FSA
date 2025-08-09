@@ -1,4 +1,5 @@
 # FSA 0.10.9000
+* `PSDlit`: Added info for Flier and Longear Sunfish.
 * `wSlit`: Added info for Flier and Longear Sunfish. This addresses [#100](https://github.com/fishR-Core-Team/FSA/issues/122)).
 
 # FSA 0.10.0
