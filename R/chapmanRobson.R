@@ -164,7 +164,17 @@ chapmanRobson.default <- function(x,catch,ages2use=age,
   n <- sum(catch.e,na.rm=TRUE)
   T <- sum(age.r*catch.e,na.rm=TRUE)
   ## Estimate S and SE (eqns 6.4 & 6.5 from Miranda & Bettoli (2007))
+  if (n+T<1) STOP("The sum of 'catch' (n) and the product of 'age' and 'catch'",
+                  " (T) for 'ages2use' is less than 1, so survival (S) cannot",
+                  " be computed. This usually occurs when 'catch' is actually",
+                  " 'CPE' and the 'CPE' values are very small. If this is the",
+                  " case, consider rescaling your 'CPE' values.")
   S.est <- T/(n+T-1)
+  if (n+T<2) STOP("The sum of 'catch' (n) and the product of 'age' and 'catch'",
+                  " (T) for 'ages2use' is less than 2, so the SE of survival (S)",
+                  " cannot be computed. This usually occurs when 'catch' is",
+                  " actually 'CPE' and the 'CPE' values are very small. If this",
+                  " is the case, consider rescaling your 'CPE' values.")
   S.SE <- sqrt(S.est*(S.est-((T-1)/(n+T-2))))
   ## Estimate Z and SE
   switch(zmethod,
