@@ -13,6 +13,7 @@
 #'    \item \code{method="HoenigLM"}: The \dQuote{modified Hoenig equation derived with a linear model} as described in Then \emph{et al.} (2015) on the second line of Table 3. Requires only \code{tmax}.
 #'    \item \code{method="HewittHoenig"}: The \dQuote{Hewitt and Hoenig (2005) equation} from their equation 8. Requires only \code{tmax}.
 #'    \item \code{method="tmax1"}: The \dQuote{one-parameter tmax equation} from the first line of Table 3 in Then \emph{et al.} (2015). Requires only \code{tmax}.
+#'    \item \code{method="HamelCope"}: The equation 7 from Hamel and Cope (2022). Requires only \code{tmax}.
 #'    \item \code{method="K1"}:  The \dQuote{one-parameter K equation} from the fourth line of Table 3 in Then \emph{et al.} (2015). Requires only \code{K}.
 #'    \item \code{method="K2"}: The \dQuote{two-parameter K equation} from the fifth line of Table 3 in Then \emph{et al.} (2015). Requires only \code{K}.
 #'    \item \code{method="JensenK1"}: The \dQuote{Jensen (1996) one-parameter K equation}. Requires only \code{K}.
@@ -54,15 +55,15 @@
 #'    \item \code{givens}: A string that contains the input values required by the method to estimate M.
 #'  }
 #' 
-#' @section Testing: Kenchington (2014) provided life history parameters for several stocks and used many models to estimate M. I checked the calculations for the \code{PaulyL}, \code{PaulyW}, \code{HoenigO}, \code{HoenigOF}, \code{HoenigO2}, \code{HoenigO2F}, \code{"JensenK1"}, \code{"Gislason"}, \code{"AlversonCarney"}, \code{"Charnov"}, \code{"ZhangMegrey"}, \code{"RikhterEfanov1"}, and \code{"RikhterEfanov2"} methods for three stocks. All results perfectly matched Kenchington's results for Chesapeake Bay Anchovy and Rio Formosa Seahorse. For the Norwegian Fjord Lanternfish, all results perfectly matched Kenchington's results except for \code{HoenigOF} and \code{HoenigO2F}.
+#' @section Testing: Kenchington (2014) provided life history parameters for several stocks and used many models to estimate M. I checked the calculations for the \code{"PaulyL"}, \code{"PaulyW"}, \code{"HoenigO"}, \code{"HoenigOF"}, \code{"HoenigO2"}, \code{"HoenigO2F"}, \code{"JensenK1"}, \code{"Gislason"}, \code{"AlversonCarney"}, \code{"Charnov"}, \code{"ZhangMegrey"}, \code{"RikhterEfanov1"}, and \code{"RikhterEfanov2"} methods for three stocks. All results perfectly matched Kenchington's results for Chesapeake Bay Anchovy and Rio Formosa Seahorse. For the Norwegian Fjord Lanternfish, all results perfectly matched Kenchington's results except for \code{"HoenigOF"} and \code{"HoenigO2F"}.
 #' 
-#' Results for the Rio Formosa Seahorse data were also tested against results from \code{\link[fishmethods]{M.empirical}} from \pkg{fishmethods} for the \code{PaulyL}, \code{PaulyW}, \code{HoenigO}, \code{HoenigOF}, \code{"Gislason"}, and \code{"AlversonCarney"} methods (the only methods in common between the two packages). All results matched perfectly.
+#' Results for the Rio Formosa Seahorse data were also tested against results from \code{\link[fishmethods]{M.empirical}} from \pkg{fishmethods} for the \code{"PaulyL"}, \code{"PaulyW"}, \code{"HoenigO"}, \code{"HoenigOF"}, \code{"Gislason"}, and \code{"AlversonCarney"} methods (the only methods in common between the two packages). All results matched perfectly.
 #' 
 #' @author Derek H. Ogle, \email{DerekOgle51@gmail.com}
 #' 
 #' @section IFAR Chapter: 11-Mortality.
 #' 
-#' @seealso See \code{\link[fishmethods]{M.empirical}} in \pkg{fishmethods} for similar functionality.
+#' @seealso See \code{\link[fishmethods]{M.empirical}} in \pkg{fishmethods} for similar functionality and the "Natural Mortality Tool" Shiny app on-line.
 #' 
 #' @references Ogle, D.H. 2016. \href{https://fishr-core-team.github.io/fishR/pages/books.html#introductory-fisheries-analyses-with-r}{Introductory Fisheries Analyses with R}. Chapman & Hall/CRC, Boca Raton, FL.
 #' 
@@ -73,6 +74,8 @@
 #' Charnov, E.L., H. Gislason, and J.G. Pope. 2013. Evolutionary assembly rules for fish life histories. Fish and Fisheries. 14:213-224.
 #' 
 #' Gislason, H., N. Daan, J.C. Rice, and J.G. Pope. 2010. Size, growth, temperature and the natural mortality of marine fish. Fish and Fisheries 11:149-158.
+#' 
+#' Hamel, O. and J. M. Cope. 2022. Development and considerations for application of a longevity-based prior for the natural mortality rate. Fisheries Research 256:106477 [Was (is? from https://www.researchgate.net/publication/363595336_Development_and_considerations_for_application_of_a_longevity-based_prior_for_the_natural_mortality_rate).]
 #' 
 #' Hewitt, D.A. and J.M. Hoenig. 2005. Comparison of two approaches for estimating natural mortality based on longevity. Fishery Bulletin. 103:433-437. [Was (is?) from http://fishbull.noaa.gov/1032/hewitt.pdf.]
 #' 
@@ -108,7 +111,7 @@
 #' Mmethods("tmax")
 #' 
 #' ## Simple Examples
-#' metaM("tmax",tmax=20)
+#' metaM("HamelCope",tmax=20)
 #' metaM("HoenigNLS",tmax=20)
 #' metaM("HoenigNLS",tmax=20,verbose=FALSE)
 #'  
@@ -133,7 +136,7 @@
 #'
 #' ## Example of multiple methods using Mmethods
 #' # select some methods
-#' metaM(Mmethods()[-c(15,20,22:24,26:29)],K=K,Linf=Linf,Temp=Temp,tmax=tmax,t50=t50)
+#' metaM(Mmethods()[-c(16,21,23:25,27:30)],K=K,Linf=Linf,Temp=Temp,tmax=tmax,t50=t50)
 #' # select just the Hoenig methods
 #' metaM(Mmethods("Hoenig"),K=K,Linf=Linf,Temp=Temp,tmax=tmax,t50=t50)
 #'  
@@ -150,7 +153,7 @@ Mmethods <- function(method=c("all","tmax","K","Hoenig","Pauly","FAMS")) {
   method <- match.arg(method)
   all_meth <- c("HoenigNLS","HoenigO","HoenigOF","HoenigOM","HoenigOC",
                 "HoenigO2","HoenigO2F","HoenigO2M","HoenigO2C",
-                "HoenigLM","HewittHoenig","tmax1",
+                "HoenigLM","HewittHoenig","tmax1","HamelCope",
                 "PaulyLNoT","PaulyL","PaulyW",
                 "K1","K2","JensenK1","JensenK2","Gislason",
                 "AlversonCarney","Charnov",
@@ -161,7 +164,7 @@ Mmethods <- function(method=c("all","tmax","K","Hoenig","Pauly","FAMS")) {
   P_meth <- 
   switch(method,
          all    = { meths <- all_meth },
-         tmax   = { meths <- c("tmax1",H_meth)},
+         tmax   = { meths <- c("HamelCope","tmax1",H_meth)},
          K      = { meths <- c("K1","K2","JensenK1","JensenK2")},
          Hoenig = { meths <- H_meth},
          Pauly  = { meths <- all_meth[grep("Pauly",all_meth)] },
@@ -191,6 +194,11 @@ metaM <- function(method=Mmethods(),
   
 metaM1 <- function(method,tmax,K,Linf,t0,b,L,Temp,t50,Winf,PS,...) {
   switch(method,
+         HamelCope = { ## from Hamel & Cope (2022), Equation 7
+           name <- "Hamel and Cope (2022) tmax equation"
+           iCheck_tmax(tmax)
+           givens <- c(tmax=tmax)
+           M <- 5.40/tmax },
          tmax1 = { ## from Then et al. (2015), Table 3, 1st line
            name <- "Then et al. (2015) tmax equation"
            iCheck_tmax(tmax)

@@ -10,8 +10,8 @@ test_that("metaM() messages",{
                "should be one of")
   
   ## missing parameters
-  # default tmax method
-  expect_error(metaM("tmax"),
+  # default tmax1 method
+  expect_error(metaM("tmax1"),
                "must be given to")
   # Pauly L method
   expect_error(metaM("PaulyL",Linf=200,K=0.3),
@@ -136,7 +136,8 @@ test_that("metaM() matches results from Kenchington (2014)",{
   expect_equal(round(tmp$M,2)[-7],tmp$expM[-7])
   
   ## Norwegian Fjord Lanternfish
-  ##   matches except for the HoenigOF and HoenigO2F, which Kenchington acknowledged as erroneous
+  ##   matches except for the HoenigOF and HoenigO2F, which Kenchington
+  ##   acknowledged as erroneous
   tmp <- metaM(meths,tmax=8,Linf=8.306,Winf=8.68,K=0.204,t0=-0.64,
                b=3.26,t50=2,T=8,L=2)
   tmp <- data.frame(tmp,expM=c(0.51,0.46,0.55,0.61,0.58,0.64,0.31,
