@@ -90,15 +90,21 @@
 #'                                "Largemouth Bass"=c(254,356)))
 #' peek(df,n=20)
 #' 
-#' #===== Example for a species with sub-groups
+#' #===== Example for some species with sub-groups
 #' dbt <- data.frame(species=factor(rep(c("Brown Trout"),30)),
 #'                   tl=round(rnorm(30,230,50),0))
 #' dlt <- data.frame(species=factor(rep(c("Lake Trout"),30)),
 #'                   tl=round(rnorm(30,550,60),0))
-#' df2 <- rbind(dbt,dlt)
+#' dcs <- data.frame(species=factor(rep(c("Chinook Salmon"),20)),
+#'                   tl=round(rnorm(20,450,50),0))
+#' df2 <- rbind(dbt,dlt,dcs)
 #' 
-#' df2$psd <- psdAdd(tl~species,data=df2,group=list("Brown Trout"="lentic"))
-#' peek(df2,n=6)
+#' df2$psd <- psdAdd(tl~species,data=df2,
+#'                   group=list("Brown Trout"="lentic",
+#'                              "Chinook Salmon"="landlocked"),
+#'                   addLens=list("Brown Trout"=240,
+#'                                "Lake Trout"=425))
+#' peek(df2,n=20)
 #' 
 #' @rdname psdAdd
 #' @export
@@ -120,8 +126,8 @@ psdAdd.default <- function(len,species,group=NULL,units=c("mm","cm","in"),
   ## Prepare the PSD literature values data frame
   PSDlit <- FSA::PSDlit
   ##  Find species that have known Gabelhouse lengths
-  # get list of species in data
-  specs <- unique(species)
+  # get list of species in data ... change from factor to character if necessary
+  specs <- as.character(unique(species))
   GLHSspecs <- specs[specs %in% unique(PSDlit$species)]
   ## Create data.frames with species that are NA and w/o Gabelhouse lengths and
   ## one with Gabelhouse lengths. The loop below will then start with a 
@@ -138,7 +144,7 @@ psdAdd.default <- function(len,species,group=NULL,units=c("mm","cm","in"),
   # data.frame where species have Gabelhouse lengths ... make sure no NAs
   data <- data[data$species %in% GLHSspecs,]
   data <- data[!is.na(data$species),]
-
+  
   ## Cycle through each species where PSD values are known, add PSD categories
   ## and append to data.frame that contained species w/o Gabelhouse lengths
   for (i in seq_along(GLHSspecs)) {
@@ -150,10 +156,10 @@ psdAdd.default <- function(len,species,group=NULL,units=c("mm","cm","in"),
     else tmpAddLens <- NULL
     # get the Gabelhouse length categories
     if (!is.null(group)) {
-      if (GLHSspecs[i] %in% names(group)) group <- group[[GLHSspecs[i]]]
-      else group <- NULL
-    }
-    glhse <- psdVal(GLHSspecs[i],group=group,units=units,addLens=tmpAddLens)
+      if (GLHSspecs[i] %in% names(group)) tmp_group <- group[[GLHSspecs[i]]]
+      else tmp_group <- NULL
+    } else tmp_group <- NULL
+    glhse <- psdVal(GLHSspecs[i],group=tmp_group,units=units,addLens=tmpAddLens)
     # computes the Gabelhouse length categories and adds to the data frame
     if (all(is.na(tmpdf$len))) {
       if (verbose) message("All values in 'len' were missing for ",GLHSspecs[i])

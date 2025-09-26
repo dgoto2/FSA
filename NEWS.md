@@ -1,6 +1,7 @@
 # FSA 0.10.9000
 * `chapmanRobson()`: Added catch for when n+T<1 and n+T<2. This addresses [#131](https://github.com/fishR-Core-Team/FSA/issues/131)).
 * `metaM()`: Added `method="HamelCope"` to address [#133](https://github.com/fishR-Core-Team/FSA/issues/133). A few minor edits to documentation.
+* `PSDadd()`: Addressed but as described in [#136](https://github.com/fishR-Core-Team/FSA/issues/136)). Thanks to Dave Glover.
 * `PSDlit`: Added info for Flier and Longear Sunfish.
 * `wSlit`: Added info for Flier and Longear Sunfish. This addresses [#122](https://github.com/fishR-Core-Team/FSA/issues/122)).
 

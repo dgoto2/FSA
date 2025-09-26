@@ -123,15 +123,21 @@ df$psd4 <- psdAdd(tl~species,data=df,verbose=FALSE,
                                "Largemouth Bass"=c(254,356)))
 peek(df,n=20)
 
-#===== Example for a species with sub-groups
+#===== Example for some species with sub-groups
 dbt <- data.frame(species=factor(rep(c("Brown Trout"),30)),
                   tl=round(rnorm(30,230,50),0))
 dlt <- data.frame(species=factor(rep(c("Lake Trout"),30)),
                   tl=round(rnorm(30,550,60),0))
-df2 <- rbind(dbt,dlt)
+dcs <- data.frame(species=factor(rep(c("Chinook Salmon"),20)),
+                  tl=round(rnorm(20,450,50),0))
+df2 <- rbind(dbt,dlt,dcs)
 
-df2$psd <- psdAdd(tl~species,data=df2,group=list("Brown Trout"="lentic"))
-peek(df2,n=6)
+df2$psd <- psdAdd(tl~species,data=df2,
+                  group=list("Brown Trout"="lentic",
+                             "Chinook Salmon"="landlocked"),
+                  addLens=list("Brown Trout"=240,
+                               "Lake Trout"=425))
+peek(df2,n=20)
 
 }
 \references{
