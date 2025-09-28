@@ -63,6 +63,13 @@ test_that("wrAdd() messages",{
                     tl=round(rnorm(30,500,200),0))
   wae$wt <- round(3.33e-06*wae$tl^3.16+rnorm(30,0,50),1)
   
+  ## Simulate third data set
+  ruf <- data.frame(species=factor(rep(c("Ruffe"),30)),
+                    tl=round(rnorm(30,130,20),0))
+  ruf$wt <- round(3.03e-06*ruf$tl^3.26+rnorm(30,0,10),1)
+  
+  df2 <- rbind(wae,dbg,ruf,dbt)
+  
   ## bad units
   expect_error(wrAdd(wt~tl+species,df,units="inches"),"should be one of")
   
@@ -98,6 +105,17 @@ test_that("wrAdd() messages",{
   expect_error(wrAdd(wt~tl+species,wae,
                      WsOpts=list(Walleye=list(junk=50))),
                "'junk' in 'WsOpts=' must be one of")
+  ## Need to use WsOpts for some, but not all, of the species
+  expect_error(wrAdd(wt~tl+species,data=df2),
+               "More than one Ws equation exists for \"Walleye\"") %>%
+    expect_output("Walleye")
+  expect_error(wrAdd(wt~tl+species,data=df2,
+                        WsOpts=list(Walleye=list(group="overall"))),
+               "More than one Ws equation exists for \"Ruffe\"") %>%
+    expect_output("Ruffe")
+  expect_no_error(wrAdd(wt~tl+species,data=df2,
+                        WsOpts=list(Walleye=list(group="overall"),
+                                    Ruffe=list(ref=75))))
 })
 
 

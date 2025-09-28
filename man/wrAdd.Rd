@@ -93,6 +93,23 @@ wae$Wr <- wrAdd(wt~tl+species,data=wae,
                 WsOpts=list(Walleye=list(group="overall")))
 peek(wae,n=10)
 
+#===== Example with a species that has Ws eqns for multiple reference values
+#      and one must be specified with WsOpts
+ruf <- data.frame(species=factor(rep(c("Ruffe"),30)),
+                  tl=round(rnorm(30,130,20),0))
+ruf$wt <- round(3.03e-06*ruf$tl^3.26+rnorm(30,0,10),1)
+# ruf$Wr <- wrAdd(wt~tl+species,data=ruf) # will err b/c multiple refs
+ruf$Wr <- wrAdd(wt~tl+species,data=ruf,
+                WsOpts=list(Ruffe=list(ref=75)))
+peek(ruf,n=10)
+
+#===== Example with two uses of WsOpts (and one species without)
+df2 <- rbind(wae[-4],dbg,ruf[-4])
+df2$Wr1 <- wrAdd(wt~tl+species,data=df2,
+                 WsOpts=list(Walleye=list(group="overall"),
+                             Ruffe=list(ref=75)))
+peek(df2,n=15)
+
 }
 \references{
 Ogle, D.H. 2016. \href{https://fishr-core-team.github.io/fishR/pages/books.html#introductory-fisheries-analyses-with-r}{Introductory Fisheries Analyses with R}. Chapman & Hall/CRC, Boca Raton, FL.

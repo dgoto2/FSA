@@ -77,6 +77,23 @@
 #'                 WsOpts=list(Walleye=list(group="overall")))
 #' peek(wae,n=10)
 #' 
+#' #===== Example with a species that has Ws eqns for multiple reference values
+#' #      and one must be specified with WsOpts
+#' ruf <- data.frame(species=factor(rep(c("Ruffe"),30)),
+#'                   tl=round(rnorm(30,130,20),0))
+#' ruf$wt <- round(3.03e-06*ruf$tl^3.26+rnorm(30,0,10),1)
+#' # ruf$Wr <- wrAdd(wt~tl+species,data=ruf) # will err b/c multiple refs
+#' ruf$Wr <- wrAdd(wt~tl+species,data=ruf,
+#'                 WsOpts=list(Ruffe=list(ref=75)))
+#' peek(ruf,n=10)
+#' 
+#' #===== Example with two uses of WsOpts (and one species without)
+#' df2 <- rbind(wae[-4],dbg,ruf[-4])
+#' df2$Wr1 <- wrAdd(wt~tl+species,data=df2,
+#'                  WsOpts=list(Walleye=list(group="overall"),
+#'                              Ruffe=list(ref=75)))
+#' peek(df2,n=15)
+#' 
 #' @rdname wrAdd
 #' @export
 wrAdd <- function (wt,...) {
@@ -107,7 +124,7 @@ wrAdd.default <- function(wt,len,spec,
     #----- Reduce Wsdf to just for that species
     Wsdf <- droplevels(Wsdf[Wsdf$species==species,])
     #----- If >1 Ws eqn for species/units, then need user to further define
-    #      with opts, otherise one Ws eqn is returned
+    #      with opts, otherwise one Ws eqn is returned
     if (nrow(Wsdf)>1) {
       # ..... Need opts for species but none given (at all) so STOP
       if (is.null(WsOpts)) iErrOpts(Wsdf)
@@ -126,8 +143,8 @@ wrAdd.default <- function(wt,len,spec,
         Wsdf <- droplevels(Wsdf[Wsdf[[names(tmp)]]==tmp,])
         if (nrow(Wsdf)==0)
           STOP("Use of '",crit_opts[i],"=",tmp[[1]],"' for ",iStrCollapse(species),
-               " did not return a standard weight equation. Please reconsider your use ",
-               "of 'WsOpts=' to restrict to only one equation for ",
+               " did not return a standard weight equation. Please reconsider your ",
+               "use of 'WsOpts=' to restrict to only one equation for ",
                iStrCollapse(species),".")
         else if (nrow(Wsdf)>1) {
           #..... send error if not reduced to only one Ws equation
@@ -166,8 +183,8 @@ wrAdd.default <- function(wt,len,spec,
                      Wr=rep(NA,length(len)))
   #===== Initiate a blank new data frame with same columns as old data frame
   ndata <- data[-c(seq_len(nrow(data))),]  
-  #===== get list of species in data
-  specs <- unique(spec)
+  #===== get list of species in data ... change from factor to character if necessary
+  specs <- as.character(unique(spec))
   
   #===== cycle through each species where WS equations are known
   for (i in seq_along(specs)) {
