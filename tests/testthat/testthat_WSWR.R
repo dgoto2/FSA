@@ -55,7 +55,7 @@ test_that("wsVal() messages",{
                "Values in \'thesaurus\' must be named")
   expect_error(wsVal("Bluegill Sunfish",thesaurus=c("Bluegill"=7)),
                "Values in \'thesaurus\' must be strings of species names")
-  expect_error(wsVal("Bluegill Sunfish",thesaurus=factor(c("Bluegill"=7))),
+  expect_error(wsVal("Bluegill Sunfish",thesaurus=factor(c("Bluegill"="Bluegill Sunfish"))),
                "\'thesaurus\' must be either a vector or list")
   wsVal("Bluegill Sunfish",thesaurus=c("bluegill"="Bluegill Sunfish")) %>%
     expect_message("The following species names were in \'thesaurus\' but do not") %>%
@@ -196,11 +196,17 @@ test_that("wsVal() results",{
 
 
 ## Validate Results ----
-test_that("wrAdd() matches values computed in Excel.",{
+test_that("wrAdd() matches values computed 'by hand' in Excel.",{
   # Read in external CSV file
-  ftmp <- system.file("extdata","PSDWR_testdata.csv",package="FSA")
-  df <- read.csv(ftmp)
-
-  df$wr <- wrAdd(wt~tl+species,data=df)
-  expect_equal(df$wr,df$WR)
+  ftmp <- system.file("extdata","PSDWR_data4testthat.csv",package="FSA")
+  tmp <- read.csv(ftmp)
+  # Create a thesaurus for a couple of species
+  thes <- c("Bluegill"="Bluegill Sunfish",
+            "Lake Trout"="Lean Lake Trout")
+  # Add wr variable as calculated in FSA
+  tmp$wr2 <- wrAdd(wt~len+species2,data=tmp,
+                   thesaurus=thes,
+                   WsOpts=list(Ruffe=list(ref=75)))
+  # Compare  
+  expect_equal(tmp$wr,tmp$wr2)
 })

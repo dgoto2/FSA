@@ -69,7 +69,7 @@ tmp$wr1 <- wrAdd(wt~len+species,data=tmp)
 tmp$wr2 <- wrAdd(tmp$wt,tmp$len,tmp$species)
 #----- same but using dplyr
 if (require(dplyr)) {
-  tmp <- tmp |>
+  tmp <- tmp \%>\%
     mutate(wr3=wrAdd(wt,len,species))
 }
 #----- examine results

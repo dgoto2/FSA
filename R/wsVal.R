@@ -88,7 +88,7 @@
 #' 
 #' #----- Same as above but using dplyr
 #' if (require(dplyr)) {
-#'   yepdf <- PSDWRtest |> filter(species=="Yellow Perch") |> select(species,len,wt) |>
+#'   yepdf <- PSDWRtest %>% filter(species=="Yellow Perch") %>% select(species,len,wt) %>%
 #'     mutate(ws=10^(wsYEP[["int"]]+wsYEP[["slope"]]*log10(len)),
 #'            ws=ifelse(len<wsYEP[["min.TL"]],NA,ws),
 #'            wr=wt/ws*100)

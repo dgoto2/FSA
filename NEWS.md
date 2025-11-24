@@ -7,6 +7,7 @@
 * `PSDWRTest`: Added for testing PSD and relative weight functions.
 * `wrAdd()`: Addressed bugs similar to those for `psdAdd()`.
 * `wSlit`: Added info for Flier and Longear Sunfish to address [#122](https://github.com/fishR-Core-Team/FSA/issues/122)). Also updated information info for Alabama Bass and Spotted Bass. Duplicated lines that combine `species` and `group` to partially address [#137](https://github.com/fishR-Core-Team/FSA/issues/137).
+* `wrAdd()`: Added `thesaurus` functionality. Reworked examples in documentation. Reworked testing framework (especially expanded validation of results with hand-calculations).
 * `wsVal()`: Added `thesaurus` functionality.
 
 # FSA 0.10.0

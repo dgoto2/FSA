@@ -18,8 +18,8 @@ bktdf <- data.frame(species="Brook Trout",
                     len=round(c(rnorm(20,mean=175,sd=25),
                                 rnorm(50,mean=255,sd=25),
                                 rnorm(10,mean=310,sd=25)),0)) |>
-  dplyr::mutate(wt=10^(-5.2)*len^3.1,
-                wt=round(wt+rnorm(dplyr::n(),wt*0,10),1),
+  dplyr::mutate(wt=10^(-5.18)*len^3.1,
+                wt=round(wt+rnorm(dplyr::n(),wt*0.10),1),
                 wt=ifelse(wt<=0,min(wt[wt>0]),wt),
                 sex=sample(c("F","M"),dplyr::n(),replace=TRUE),
                 sex=NA_character_)
@@ -126,7 +126,11 @@ yepdf <- data.frame(species="Yellow Perch",
                 sex=sample(c("F","M"),dplyr::n(),replace=TRUE),
                 sex=ifelse(len<100,NA,sex))
 
-
+## Combine
 PSDWRtest <- rbind(bgdf,bktdf,brt1df,brt2df,iaddf,lmbdf,lktdf,muedf,rufdf,waedf1,waedf2,yepdf)
 
+## Add some (~5%) random NAs to wt
+PSDWRtest$wt[sample(nrow(PSDWRtest),round(0.05*nrow(PSDWRtest),0))] <- NA_real_
+
+## Write out to Rdata file
 usethis::use_data(PSDWRtest,internal=FALSE,overwrite=TRUE)
