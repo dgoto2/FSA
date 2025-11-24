@@ -3,6 +3,8 @@
 #' @description Parameters for all known standard weight equations.
 #'
 #' @details The minimum TL for the English units were derived by rounding the converted minimum TL for the metric units to what seemed like common units (inches, half inches, or quarter inches).
+#' 
+#' Entries for \dQuote{Chinook Salmon (landlocked)} and \dQuote{Striped Bass (landlocked)} are the same as for \dQuote{Chinook Salmon} and \dQuote{Striped Bass} but were added to facilitate use with PSD calculations as Gabelhouse lengths are only published for the landlocked sub-group; i.e., these entries in \code{WSlit} are not necessarily just for landlocked populations.
 #'
 #' @name WSlit
 #'
