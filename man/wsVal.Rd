@@ -6,15 +6,19 @@
 \usage{
 wsVal(
   species = "List",
+  thesaurus = NULL,
   group = NULL,
   units = c("metric", "English"),
   ref = NULL,
   method = NULL,
-  simplify = FALSE
+  simplify = FALSE,
+  dat = NULL
 )
 }
 \arguments{
 \item{species}{A string that contains the species name for which to find Ws coefficients. See details.}
+
+\item{thesaurus}{A named vector or list for providing alternative species names (the values in the list) that correspond to specific names in \code{WSlit} (the names in the list). See details and examples.}
 
 \item{group}{A string that contains the sub-group of \code{species} for which to find the Ws coefficients; e.g., things like \dQuote{lotic}, \dQuote{lentic}, \dQuote{female}, \dQuote{male}.}
 
@@ -25,6 +29,8 @@ wsVal(
 \item{method}{A string that indicates which equation-derivation method should be used (one of \code{"RLP"}, \code{"EmP"}, or \code{"Other"}). Defaults to \code{NULL} which will result in the only method available being returned or an error asking the user to choose a method for equations for which more than one method is available (which is the case for very few species).}
 
 \item{simplify}{A logical that indicates whether the \sQuote{units}, \sQuote{ref}, \sQuote{measure}, \sQuote{method}, \sQuote{comments}, and \sQuote{source} fields should be included (\code{=FALSE}) or not (\code{=TRUE}; DEFAULT). See details.}
+
+\item{dat}{Data.frame of Gabelhouse length categories for all species. Defaults to `WSlit` and is generally not used by the user (this simplifies use of this function in \code{psdAdd}).}
 }
 \value{
 A one row data frame from \code{\link{WSlit}} that contains all known information about the standard weight equation for a given species, type of measurement units, and reference percentile if \code{simplify=FALSE}. If \code{simplify=TRUE} then only the species; minimum and maximum length for which the standard equation should be applied; and intercept, slope, and quadratic  coefficients for the standard weight equation. Note that the maximum length and the quadratic coefficient will not be returned if they do not exist in \code{\link{WSlit}} for the species.
@@ -43,6 +49,10 @@ See \code{\link{WSlit}} for more information about the meaning of each value ret
 
 Note from above that the coefficients are returned for the TRANSFORMED model. Thus, to obtain the standard weight (Ws), the returned coefficients are used to compute the common log of Ws which must then be raised to the power of 10 to compute the Ws.
 
+The \code{thesaurus} argument may be used to relate alternate species names to the species names used in \code{WSlit}. For example, you (or your data) may use \dQuote{Bluegill Sunfish}, but \dQuote{Bluegill} is used in \code{WSlit}. The alternate species name can be used here if it is defined in a named vector (or list) given to \code{thesarus=}. The alternate species name is the value and the species name in \code{PSDlit} is the name in this vector/list - e.g., \code{c("Bluegill"="Bluegill Sunfish")}. See the examples for a demonstration.
+
+Some species have length categories separated by sub-group. For example, length categories exist for both lentic and lotic populations of Brown Trout. The length values for a sub-group may be obtained by either including the species name in \code{species} and the sub-group name in \code{group} or by using the combined species and sub-group name, with the sub-group name in parentheses, in \code{species}. Both methods are demonstrated in the examples. Note that an error is returned if a species has sub-groups but neither method is used to define the sub-group.
+
 See examples and \href{https://fishr-core-team.github.io/FSA/articles/Computing_Relative_Weights.html}{this article} for a demonstration.
 }
 \section{IFAR Chapter}{
@@ -53,49 +63,56 @@ See examples and \href{https://fishr-core-team.github.io/FSA/articles/Computing_
 #===== List all available Ws equations
 wsVal()
 
-#===== Find equations for Bluegill, in different formats
-wsVal("Bluegill")
-wsVal("Bluegill",units="metric")
-wsVal("Bluegill",units="English")
-wsVal("Bluegill",units="English",simplify=TRUE)
-
-#===== Find equation for Cutthroat Trout, demonstrating use of group
-wsVal("Cutthroat Trout",group="lotic")
-wsVal("Cutthroat Trout",group="lentic")
+#===== Find equations for Yellow Perch, in different formats
+wsVal("Yellow Perch")
+wsVal("Yellow Perch",units="metric")   # same as default
+wsVal("Yellow Perch",units="English")
+wsVal("Yellow Perch",units="English",simplify=TRUE)
 
 #===== Find equation for Ruffe, demonstrating quadratic formula
 wsVal("Ruffe",units="metric",ref=75,simplify=TRUE)
 wsVal("Ruffe",units="metric",ref=50,simplify=TRUE)
 
+#===== Find equation for Brown Trout, which has equations for sub-groups
+#-----   demonstrating use of group= argument
+wsVal("Brown Trout",group="lotic")
+wsVal("Brown Trout",group="lentic")
+#-----   demonstrating group combined in species name, so no group= arg
+wsVal("Brown Trout (lotic)")
+wsVal("Brown Trout (lentic)")
+
+#===== Find equation for Bluegill Sunfish (aka Bluegill in WSlit)
+#        Note that this not that useful here as could just use "Bluegill"
+#        in first argument. This will be useful in wrAdd()
+wsVal("Bluegill Sunfish",thesaurus=c("Bluegill"="Bluegill Sunfish"))
+
 #===== Add Ws & Wr values to a data frame (for one species) ... also see wrAdd()
+#----- Example data from PSDWRtest, simplify variables for this example
+yepdf <- subset(PSDWRtest,species=="Yellow Perch",select=c("species","len","wt"))
+str(yepdf)
+
 #----- Get Ws equation info
-wsBG <- wsVal("Bluegill",units="metric")
-wsBG
+( wsYEP <- wsVal("Yellow Perch",units="metric") )
 
-#----- Get example data
-data(BluegillLM,package="FSAdata")
-str(BluegillLM)
-
-#----- Add Ws (eqn is on log10-log10 scale ... so log10 len, 10^ result)
-BluegillLM$ws <- 10^(wsBG[["int"]]+wsBG[["slope"]]*log10(BluegillLM$tl))
+#----- Add Ws (eqn is on log10-log10 scale ... so log10 length, 10^ result)
+yepdf$ws <- 10^(wsYEP[["int"]]+wsYEP[["slope"]]*log10(yepdf$len))
 
 #----- Change Ws for fish less than min.TL to NA
-BluegillLM$ws[BluegillLM$tl<wsBG[["min.TL"]]] <- NA
+yepdf$ws[yepdf$len<wsYEP[["min.TL"]]] <- NA
 
 #----- Add Wr
-BluegillLM$wr <- BluegillLM$wght/BluegillLM$ws*100
+yepdf$wr <- yepdf$wt/yepdf$ws*100
 
 #----- Examine results
-peek(BluegillLM,n=6)
+peek(yepdf,n=6)
 
 #----- Same as above but using dplyr
-data(BluegillLM,package="FSAdata")   # reset to original for this example
 if (require(dplyr)) {
-  BluegillLM <- BluegillLM \%>\%
-    mutate(ws=10^(wsBG[["int"]]+wsBG[["slope"]]*log10(tl)),
-           ws=ifelse(tl<wsBG[["min.TL"]],NA,ws),
-           wr=wght/ws*100)
-  peek(BluegillLM,n=6)
+  yepdf <- PSDWRtest \%>\% filter(species=="Yellow Perch") \%>\% select(species,len,wt) \%>\%
+    mutate(ws=10^(wsYEP[["int"]]+wsYEP[["slope"]]*log10(len)),
+           ws=ifelse(len<wsYEP[["min.TL"]],NA,ws),
+           wr=wt/ws*100)
+  peek(yepdf,n=6)
 }
 
 }

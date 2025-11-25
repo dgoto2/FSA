@@ -11,6 +11,7 @@ psdAdd(len, ...)
 \method{psdAdd}{default}(
   len,
   species,
+  thesaurus = NULL,
   group = NULL,
   units = c("mm", "cm", "in"),
   use.names = TRUE,
@@ -23,6 +24,7 @@ psdAdd(len, ...)
 \method{psdAdd}{formula}(
   len,
   data = NULL,
+  thesaurus = NULL,
   group = NULL,
   units = c("mm", "cm", "in"),
   use.names = TRUE,
@@ -38,6 +40,8 @@ psdAdd(len, ...)
 \item{\dots}{Not used.}
 
 \item{species}{A character or factor vector that contains the species names. Ignored if \code{len} is a formula.}
+
+\item{thesaurus}{A named list for providing alternative species names (the values in the list) that correspond to specific names in \code{PSDlit} (the names in the list). See details and examples.}
 
 \item{group}{A named list that provides specific choices for \code{group} for species for which more than one set of Gabelhouse lengths exists in \code{\link{PSDlit}}.}
 
@@ -75,69 +79,112 @@ See examples and \href{https://fishr-core-team.github.io/FSA/articles/Computing_
 }
 
 \examples{
-#===== Create random data for three species
-set.seed(345234534)
-dbg <- data.frame(species=factor(rep(c("Bluegill"),30)),
-                  tl=round(rnorm(30,130,50),0))
-dlb <- data.frame(species=factor(rep(c("Largemouth Bass"),30)),
-                  tl=round(rnorm(30,350,60),0))
-dbt <- data.frame(species=factor(rep(c("Bluefin Tuna"),30)),
-                  tl=round(rnorm(30,1900,300),0))
-df <- rbind(dbg,dlb,dbt)
+#===== Simple examples -- 2 species, no groups, names as in PSDlit
+#----- Isolate simple data from PSDWRtest
+tmp <- subset(PSDWRtest,
+              species \%in\% c("Yellow Perch","Largemouth Bass"),
+              select=c("species","len"))
+peek(tmp,n=6)
 
-#===== Simple examples
 #----- Add variable using category names -- non-formula notation
-df$PSD <- psdAdd(df$tl,df$species)
-peek(df,n=6)
+tmp$PSD <- psdAdd(tmp$len,tmp$species)
+peek(tmp,n=6)
 
 #----- Add variable using category names -- formula notation
-df$PSD1 <- psdAdd(tl~species,data=df)
-peek(df,n=6)
+tmp$PSD1 <- psdAdd(len~species,data=tmp)
+peek(tmp,n=6)
 
 #----- Add variable using length values as names
-#      Also turned off messaging of fish not in PSDlit
-df$PSD2 <- psdAdd(tl~species,data=df,use.names=FALSE,verbose=FALSE)
-peek(df,n=6)
+tmp$PSD2 <- psdAdd(len~species,data=tmp,use.names=FALSE)
+peek(tmp,n=6)
 
 #----- Same as above but using dplyr
 if (require(dplyr)) {
-  df <- df \%>\%
-    mutate(PSD1A=psdAdd(tl,species,verbose=FALSE),
-           PSD2A=psdAdd(tl,species,use.names=FALSE,verbose=FALSE))
-  peek(df,n=6)
+  tmp <- tmp \%>\%
+    mutate(PSD1A=psdAdd(len,species),
+           PSD2A=psdAdd(len,species,use.names=FALSE))
+  peek(tmp,n=6)
 }
 
-#===== Adding lengths besides the Gabelhouse lengths
-#----- Add a "minimum length" for Bluegill
-df$PSD3 <- psdAdd(tl~species,data=df,verbose=FALSE,
-                  addLens=list("Bluegill"=c("minLen"=175)))
-df$PSD3A <- psdAdd(tl~species,data=df,verbose=FALSE,
-                   addLens=list("Bluegill"=175))
-df$PSD3B <- psdAdd(tl~species,data=df,verbose=FALSE,
-                   addLens=list("Bluegill"=c("minLen"=175)),use.names=FALSE)
-head(df,n=6)
+#===== Add lengths besides Gabelhouse lengths (start over with same simple data)
+tmp <- subset(PSDWRtest,
+              species \%in\% c("Yellow Perch","Largemouth Bass"),
+              select=c("species","len"))
 
-#----- Add add'l lengths and names for Bluegill and Largemouth Bass
-df$psd4 <- psdAdd(tl~species,data=df,verbose=FALSE,
-                  addLens=list("Bluegill"=175,
-                               "Largemouth Bass"=c(254,356)))
-peek(df,n=20)
+#----- Add a "minimum length" for one species
+tmp$PSD3 <- psdAdd(len~species,data=tmp,
+                   addLens=list("Yellow Perch"=c("minLen"=225)))
+tmp$PSD3A <- psdAdd(len~species,data=tmp,
+                    addLens=list("Yellow Perch"=225))
+tmp$PSD3B <- psdAdd(len~species,data=tmp,
+                    addLens=list("Yellow Perch"=c("minLen"=225)),use.names=FALSE)
+head(tmp,n=6)
 
-#===== Example for some species with sub-groups
-dbt <- data.frame(species=factor(rep(c("Brown Trout"),30)),
-                  tl=round(rnorm(30,230,50),0))
-dlt <- data.frame(species=factor(rep(c("Lake Trout"),30)),
-                  tl=round(rnorm(30,550,60),0))
-dcs <- data.frame(species=factor(rep(c("Chinook Salmon"),20)),
-                  tl=round(rnorm(20,450,50),0))
-df2 <- rbind(dbt,dlt,dcs)
+#----- Add add'l lengths and names for multiple species
+tmp$psd4 <- psdAdd(len~species,data=tmp,
+                   addLens=list("Yellow Perch"=175,
+                                "Largemouth Bass"=c(254,306)))
+peek(tmp,n=20)
 
-df2$psd <- psdAdd(tl~species,data=df2,
-                  group=list("Brown Trout"="lentic",
-                             "Chinook Salmon"="landlocked"),
-                  addLens=list("Brown Trout"=240,
-                               "Lake Trout"=425))
-peek(df2,n=20)
+#===== Handle additional species in PSDlit but named differently
+#----- Isolate different species data from PSDWRtest
+tmp <- subset(PSDWRtest,
+              species \%in\% c("Bluegill Sunfish","Lean Lake Trout"),
+              select=c("species","len"))
+
+#----- No "Bluegill Sunfish" in PSDlit, use thesaurus to note this is "Bluegill"
+#        Note: "Lean Lake Trout" not processed as not in PSDlit
+tmp$psd5 <- psdAdd(len~species,data=tmp,
+                   thesaurus=c("Bluegill"="Bluegill Sunfish"))
+peek(tmp,n=6)
+
+#----- Process multiple species in PSDlit with different names
+#        Note: Can still use addLens=, but with original name
+thes <- c("Bluegill"="Bluegill Sunfish","Lake Trout"="Lean Lake Trout")
+tmp$psd6 <- psdAdd(len~species,data=tmp,thesaurus=thes)
+tmp$psd7 <- psdAdd(len~species,data=tmp,thesaurus=thes,
+                   addLens=list("Bluegill Sunfish"=c("minLen"=175)))
+peek(tmp,n=20)
+
+#===== Example for a species with sub-groups but only one sub-group in data
+#----- Isolate species data from PSDWRtest ... only Brook Trout has sub-group
+tmp <- subset(PSDWRtest,
+              species \%in\% c("Yellow Perch","Brook Trout"),
+              select=c("species","len"))
+
+#----- This will err as Brook Trout has sub-groups in PSDlit (as message notes)
+# tmp$psd8 <- psdAdd(len~species,data=tmp)
+
+#----- Can choose "overall" sub-group with group=
+tmp$psd8 <- psdAdd(len~species,data=tmp,
+                   group=list("Brook Trout"="overall"))
+peek(tmp,n=10)
+
+#----- Or can create species name with sub-group name in parentheses
+#        Note: this is more useful in next examples
+tmp$species2 <- ifelse(tmp$species=="Brook Trout","Brook Trout (overall)",
+                       tmp$species)
+tmp$psd8A <- psdAdd(len~species2,data=tmp) # note use of species2
+peek(tmp,n=10)
+
+#===== Example for species with more than one sub-group in data
+#----- Isolate species data from PSDWRtest ... Brown Trout has two sub-groups
+tmp <- subset(PSDWRtest,
+              species \%in\% c("Yellow Perch","Largemouth Bass","Brown Trout"),
+              select=c("species","len","location"))
+peek(tmp,n=10)
+
+#----- Must create a species name variable with sub-groups in parentheses
+#        Note: there are likely many ways to do this specific to each use-case
+tmp$species2 <- tmp$species
+tmp$species2[tmp$species=="Brown Trout" & 
+             tmp$location=="Trout Lake"] <- "Brown Trout (lotic)"
+tmp$species2[tmp$species=="Brown Trout" & 
+             tmp$location=="Brushy Creek"] <- "Brown Trout (lentic)"
+peek(tmp,n=10)
+
+tmp$psd9 <- psdAdd(len~species2,data=tmp)
+peek(tmp,n=10)
 
 }
 \references{
