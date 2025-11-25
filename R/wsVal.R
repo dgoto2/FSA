@@ -10,20 +10,17 @@
 #' 
 #' Note from above that the coefficients are returned for the TRANSFORMED model. Thus, to obtain the standard weight (Ws), the returned coefficients are used to compute the common log of Ws which must then be raised to the power of 10 to compute the Ws.
 #' 
-#' The \code{thesaurus} argument may be used to relate alternate species names to the species names used in \code{WSlit}. For example, you (or your data) may use \dQuote{Bluegill Sunfish}, but \dQuote{Bluegill} is used in \code{WSlit}. The alternate species name can be used here if it is defined in a named vector (or list) given to \code{thesarus=}. The alternate species name is the value and the species name in \code{PSDlit} is the name in this vector/list - e.g., \code{c("Bluegill"="Bluegill Sunfish")}. See the examples for a demonstration.
-#' 
 #' Some species have length categories separated by sub-group. For example, length categories exist for both lentic and lotic populations of Brown Trout. The length values for a sub-group may be obtained by either including the species name in \code{species} and the sub-group name in \code{group} or by using the combined species and sub-group name, with the sub-group name in parentheses, in \code{species}. Both methods are demonstrated in the examples. Note that an error is returned if a species has sub-groups but neither method is used to define the sub-group.
 #' 
 #' See examples and \href{https://fishr-core-team.github.io/FSA/articles/Computing_Relative_Weights.html}{this article} for a demonstration.
 #'
 #' @param species A string that contains the species name for which to find Ws coefficients. See details.
-#' @param thesaurus A named vector or list for providing alternative species names (the values in the list) that correspond to specific names in \code{WSlit} (the names in the list). See details and examples.
 #' @param group A string that contains the sub-group of \code{species} for which to find the Ws coefficients; e.g., things like \dQuote{lotic}, \dQuote{lentic}, \dQuote{female}, \dQuote{male}.
 #' @param units A string that indicates whether the coefficients for the standard weight equation to be returned are in \code{"metric"} (DEFAULT; mm and g) or \code{"English"} (in and lbs) units.
 #' @param ref A numeric that indicates which percentile the equation should be returned for. Note that the vast majority of equations only exist for the \code{75}th percentile (DEFAULT).
 #' @param method A string that indicates which equation-derivation method should be used (one of \code{"RLP"}, \code{"EmP"}, or \code{"Other"}). Defaults to \code{NULL} which will result in the only method available being returned or an error asking the user to choose a method for equations for which more than one method is available (which is the case for very few species).
 #' @param simplify A logical that indicates whether the \sQuote{units}, \sQuote{ref}, \sQuote{measure}, \sQuote{method}, \sQuote{comments}, and \sQuote{source} fields should be included (\code{=FALSE}) or not (\code{=TRUE}; DEFAULT). See details.
-#' @param dat Data.frame of Gabelhouse length categories for all species. Defaults to `WSlit` and is generally not used by the user (this simplifies use of this function in \code{psdAdd}).
+#' @param dat Data.frame of Gabelhouse length categories for all species. Defaults to `WSlit` and is generally not used by the user (this simplifies use of this function in \code{wrAdd}).
 #'
 #' @return A one row data frame from \code{\link{WSlit}} that contains all known information about the standard weight equation for a given species, type of measurement units, and reference percentile if \code{simplify=FALSE}. If \code{simplify=TRUE} then only the species; minimum and maximum length for which the standard equation should be applied; and intercept, slope, and quadratic  coefficients for the standard weight equation. Note that the maximum length and the quadratic coefficient will not be returned if they do not exist in \code{\link{WSlit}} for the species.
 #'
@@ -61,11 +58,6 @@
 #' wsVal("Brown Trout (lotic)")
 #' wsVal("Brown Trout (lentic)")
 #' 
-#' #===== Find equation for Bluegill Sunfish (aka Bluegill in WSlit)
-#' #        Note that this not that useful here as could just use "Bluegill"
-#' #        in first argument. This will be useful in wrAdd()
-#' wsVal("Bluegill Sunfish",thesaurus=c("Bluegill"="Bluegill Sunfish"))
-#' 
 #' #===== Add Ws & Wr values to a data frame (for one species) ... also see wrAdd()
 #' #----- Example data from PSDWRtest, simplify variables for this example
 #' yepdf <- subset(PSDWRtest,species=="Yellow Perch",select=c("species","len","wt"))
@@ -96,12 +88,12 @@
 #' }
 #'
 #' @export
-wsVal <- function(species="List",thesaurus=NULL,group=NULL,
+wsVal <- function(species="List",group=NULL,
                   units=c("metric","English"),ref=NULL,method=NULL,
                   simplify=FALSE,dat=NULL) {
   #===== load WSlit data frame into this functions environment
   type <- measure <- NULL   # avoiding bindings warning in RCMD CHECK
-  if (is.null(dat)) dat <- iPrepWSlit(thesaurus)
+  if (is.null(dat)) dat <- FSA::WSlit
 
   units <- match.arg(units)
   if (length(species)>1) STOP("'species' must contain only one name.")
@@ -195,42 +187,4 @@ wsVal <- function(species="List",thesaurus=NULL,group=NULL,
       df <- df[,names(df) %in% c("species",tmp,"int","slope","quad")]
     df
   }
-}
-
-# ==============================================================================
-# Internal -- prepare WSlit by loading it and replacing its default names with
-#             names in the thesaurus, if any
-# ==============================================================================
-iPrepWSlit <- function(thesaurus) {
-  # Load WSlit into dat in this function namespace
-  dat <- FSA::WSlit
-  if (!is.null(thesaurus)) {
-    # Some sanity checks on thesaurus
-    if (!(is.vector(thesaurus) | is.list(thesaurus)))
-      STOP("'thesaurus' must be either a vector or list. ",
-           "Make sure it is not 'factor'ed.")
-    if (length(names(thesaurus))==0)
-      STOP("Values in 'thesaurus' must be named (with species names from 'WSlit'.)")
-    if (!is.character(thesaurus))
-      STOP("Values in 'thesaurus' must be strings of species names.")
-    # thesaurus appears to be a named vector/list of strings ... start processing
-    # Alphabetize names in thesaurus to match dat/WSlit
-    thesaurus <- thesaurus[order(names(thesaurus))]
-    # Remove name from thesaurus if not in dat/WSlit
-    thes.nokeep <- which(!names(thesaurus) %in% unique(dat$species))
-    if (length(thes.nokeep)>0) {
-      MESSAGE("The following species names were in 'thesaurus' but do ",
-              "not have an entry in 'WSlit' and will be ignored: ",
-              iStrCollapse(names(thesaurus)[thes.nokeep]),".")
-      thesaurus <- thesaurus[-thes.nokeep]      
-    }
-    # Find species in dat/PSDlit in kept thesaurus and change names to thesaurus names
-    if (length(thesaurus)>0) {
-      tmp <- match(dat$species,names(thesaurus))
-      thes.pos <- which(!is.na(tmp))
-      dat$species[thes.pos] <- unname(thesaurus[tmp[thes.pos]])
-    }
-  }
-  # Return dat/WSlit
-  dat
 }

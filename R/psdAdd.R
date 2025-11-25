@@ -16,7 +16,9 @@
 #'
 #' @details This computes a vector that contains the Gabelhouse lengths specific to each species for all individuals in an entire data frame. The vector can be appended to an existing data.frame to create a variable that contains the Gabelhouse lengths for each individual. The Gabelhouse length value will be \code{NA} for each individual for which Gabelhouse length definitions do not exist in \code{\link{PSDlit}}. Species names in the data.frame must be the same as those used in \code{\link{PSDlit}} (i.e., same spelling and capitalization; use \code{psdVal()} to see the list of species).
 #' 
-#' Some species have Gabelhouse lengths for sub-groups (e.g., \dQuote{lentic} vs \dQuote{lotic}). For these species, choose which sub-group to use with \code{group}.
+#' The \code{thesaurus} argument may be used to relate alternate species names to the species names used in \code{PSDlit}. For example, you (or your data) may use \dQuote{Bluegill Sunfish}, but \dQuote{Bluegill} is used in \code{PSDlit}. The alternate species name can be used here if it is defined in a named vector (or list) given to \code{thesarus=}. The alternate species name is the value and the species name in \code{PSDlit} is the name in this vector/list - e.g., \code{c("Bluegill"="Bluegill Sunfish")}. See the examples for a demonstration.
+#' 
+#' Some species have length categories separated by sub-group. For example, length categories exist for both lentic and lotic populations of Brown Trout. The length values for a sub-group may be obtained by either including the species name in \code{species} and the sub-group name in \code{group} or by using the combined species and sub-group name, with the sub-group name in parentheses, in \code{species}. Both methods are demonstrated in the examples. Note that an error is returned if a species has sub-groups but neither method is used to define the sub-group.#' 
 #' 
 #' Individuals shorter than \dQuote{stock} length will be listed as \code{substock} if \code{use.names=TRUE} or \code{0} if \code{use.names=FALSE}.
 #' 
@@ -251,4 +253,44 @@ psdAdd.formula <- function(len,data=NULL,thesaurus=NULL,
   ## Send to default method
   psdAdd.default(tmp$mf[[tmp$Rpos]],tmp$mf[[tmp$EFactPos]],thesaurus,group,units,
                  use.names,as.fact,addLens,verbose,...)
+}
+
+
+# ==============================================================================
+# Internal -- prepare PSDlit by loading it and replacing its default names with
+#             names in the thesaurus, if any
+# ==============================================================================
+iPrepPSDlit <- function(thesaurus) {
+  # Load PSDlit into dat in this function namespace
+  dat <- FSA::PSDlit
+  if (!is.null(thesaurus)) {
+    # Some sanity checks on thesaurus
+    if (!(is.vector(thesaurus) | is.list(thesaurus)))
+      STOP("'thesaurus' must be either a vector or list. ",
+           "Make sure it is not 'factor'ed.")
+    if (length(names(thesaurus))==0)
+      STOP("Values in 'thesaurus' must be named (with species names from 'PSDlit'.")
+    if (!is.character(thesaurus))
+      STOP("Values in 'thesaurus' must be strings of species names.")
+    # thesaurus appears to be a named vector/list of strings ... start processing
+    # Alphabetize names in thesaurus to match PSDlit
+    thesaurus <- thesaurus[order(names(thesaurus))]
+    # Remove name from thesaurus if not in dat/PSDlit
+    thes.nokeep <- which(!names(thesaurus) %in% unique(dat$species))
+    if (length(thes.nokeep)>0) {
+      MESSAGE("The following species names were in 'thesaurus' but do ",
+              "not have an entry in 'PSDlit' and will be ignored: ",
+              iStrCollapse(names(thesaurus)[thes.nokeep]),".")
+      thesaurus <- thesaurus[-thes.nokeep]      
+    }
+    # Find dat/PSDlit species in kept thesaurus and change names to thesaurus names
+    if (length(thesaurus)>0) {
+      thes.pos <- which(dat$species %in% names(thesaurus))
+      dat$species[thes.pos] <- unlist(thesaurus)
+      # Re-alphabetize dat/PSDlit
+      dat <- dat[order(dat$species),]
+    }
+  }
+  # Return dat/PSDlit
+  dat
 }

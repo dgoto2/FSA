@@ -107,7 +107,7 @@ psdCalc <- function(formula,data,species,
   
   #----- Make sure species is not missing, or if it is that addLens have been given
   if (!missing(species)) {
-    brks <- psdVal(species,thesaurus=NULL,group=group,units=units,
+    brks <- psdVal(species,group=group,units=units,
                    incl.zero=FALSE,addLens=addLens,addNames=addNames)    
   } else {
     # species is missing so must have an addLens

@@ -6,7 +6,6 @@
 \usage{
 wsVal(
   species = "List",
-  thesaurus = NULL,
   group = NULL,
   units = c("metric", "English"),
   ref = NULL,
@@ -18,8 +17,6 @@ wsVal(
 \arguments{
 \item{species}{A string that contains the species name for which to find Ws coefficients. See details.}
 
-\item{thesaurus}{A named vector or list for providing alternative species names (the values in the list) that correspond to specific names in \code{WSlit} (the names in the list). See details and examples.}
-
 \item{group}{A string that contains the sub-group of \code{species} for which to find the Ws coefficients; e.g., things like \dQuote{lotic}, \dQuote{lentic}, \dQuote{female}, \dQuote{male}.}
 
 \item{units}{A string that indicates whether the coefficients for the standard weight equation to be returned are in \code{"metric"} (DEFAULT; mm and g) or \code{"English"} (in and lbs) units.}
@@ -30,7 +27,7 @@ wsVal(
 
 \item{simplify}{A logical that indicates whether the \sQuote{units}, \sQuote{ref}, \sQuote{measure}, \sQuote{method}, \sQuote{comments}, and \sQuote{source} fields should be included (\code{=FALSE}) or not (\code{=TRUE}; DEFAULT). See details.}
 
-\item{dat}{Data.frame of Gabelhouse length categories for all species. Defaults to `WSlit` and is generally not used by the user (this simplifies use of this function in \code{psdAdd}).}
+\item{dat}{Data.frame of Gabelhouse length categories for all species. Defaults to `WSlit` and is generally not used by the user (this simplifies use of this function in \code{wrAdd}).}
 }
 \value{
 A one row data frame from \code{\link{WSlit}} that contains all known information about the standard weight equation for a given species, type of measurement units, and reference percentile if \code{simplify=FALSE}. If \code{simplify=TRUE} then only the species; minimum and maximum length for which the standard equation should be applied; and intercept, slope, and quadratic  coefficients for the standard weight equation. Note that the maximum length and the quadratic coefficient will not be returned if they do not exist in \code{\link{WSlit}} for the species.
@@ -48,8 +45,6 @@ This function extracts all known information from \code{\link{WSlit}} about the 
 See \code{\link{WSlit}} for more information about the meaning of each value returned.
 
 Note from above that the coefficients are returned for the TRANSFORMED model. Thus, to obtain the standard weight (Ws), the returned coefficients are used to compute the common log of Ws which must then be raised to the power of 10 to compute the Ws.
-
-The \code{thesaurus} argument may be used to relate alternate species names to the species names used in \code{WSlit}. For example, you (or your data) may use \dQuote{Bluegill Sunfish}, but \dQuote{Bluegill} is used in \code{WSlit}. The alternate species name can be used here if it is defined in a named vector (or list) given to \code{thesarus=}. The alternate species name is the value and the species name in \code{PSDlit} is the name in this vector/list - e.g., \code{c("Bluegill"="Bluegill Sunfish")}. See the examples for a demonstration.
 
 Some species have length categories separated by sub-group. For example, length categories exist for both lentic and lotic populations of Brown Trout. The length values for a sub-group may be obtained by either including the species name in \code{species} and the sub-group name in \code{group} or by using the combined species and sub-group name, with the sub-group name in parentheses, in \code{species}. Both methods are demonstrated in the examples. Note that an error is returned if a species has sub-groups but neither method is used to define the sub-group.
 
@@ -80,11 +75,6 @@ wsVal("Brown Trout",group="lentic")
 #-----   demonstrating group combined in species name, so no group= arg
 wsVal("Brown Trout (lotic)")
 wsVal("Brown Trout (lentic)")
-
-#===== Find equation for Bluegill Sunfish (aka Bluegill in WSlit)
-#        Note that this not that useful here as could just use "Bluegill"
-#        in first argument. This will be useful in wrAdd()
-wsVal("Bluegill Sunfish",thesaurus=c("Bluegill"="Bluegill Sunfish"))
 
 #===== Add Ws & Wr values to a data frame (for one species) ... also see wrAdd()
 #----- Example data from PSDWRtest, simplify variables for this example

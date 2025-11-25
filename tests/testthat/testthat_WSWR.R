@@ -48,18 +48,6 @@ test_that("wsVal() messages",{
                "Ws equations exist for both the RLP and EmP")
   expect_error(wsVal("Arctic Grayling",method="Derek"),
                "There is no Ws equation for \"Arctic Grayling\" derived")
-  #===== bad thesaurus
-  expect_error(wsVal("Bluegill Sunfish"),
-               "There is no Ws equation in \'WSlit\' for \"Bluegill Sunfish\"")
-  expect_error(wsVal("Bluegill Sunfish",thesaurus=c("Bluegill")),
-               "Values in \'thesaurus\' must be named")
-  expect_error(wsVal("Bluegill Sunfish",thesaurus=c("Bluegill"=7)),
-               "Values in \'thesaurus\' must be strings of species names")
-  expect_error(wsVal("Bluegill Sunfish",thesaurus=factor(c("Bluegill"="Bluegill Sunfish"))),
-               "\'thesaurus\' must be either a vector or list")
-  wsVal("Bluegill Sunfish",thesaurus=c("bluegill"="Bluegill Sunfish")) %>%
-    expect_message("The following species names were in \'thesaurus\' but do not") %>%
-    expect_error("There is no Ws equation in \'WSlit\' for \"Bluegill Sunfish\"")
 })
 
 test_that("wrAdd() messages",{

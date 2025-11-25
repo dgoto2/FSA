@@ -3,7 +3,6 @@
 #' @description Returns a vector with the five Gabelhouse lengths for a chosen species.
 #'
 #' @param species A string that contains the species name for which to find Gabelhouse lengths. See details.
-#' @param thesaurus A named vector or list for providing alternative species names (the values in the list) that correspond to specific names in \code{PSDlit} (the names in the list). See details and examples.
 #' @param group A string that contains the sub-group of \code{species} for which to find the Gabelhouse lengths; e.g., things like \dQuote{landlocked}, \dQuote{lentic}.
 #' @param units A string that indicates the units for the returned lengths. Choices are \code{mm} for millimeters (DEFAULT), \code{cm} for centimeters, and \code{in} for inches.
 #' @param incl.zero A logical that indicates if a zero is included in the first position of the returned vector (DEFAULT) or not. This position will be named \dQuote{substock}. See details.
@@ -13,11 +12,9 @@
 #' @param dat Data.frame of Gabelhouse length categories for all species. Defaults to `PSDlit` and is generally not used by the user (this simplifies use of this function in \code{psdAdd}).
 #'
 #' @details Finds the Gabelhouse lengths from \code{data(PSDlit)} for the species given in \code{species}. The species name must be spelled exactly (including capitalization) as it appears in \code{data(PSDlit)}. Type \code{psdVal()} to see the list of species and how they are spelled.
-#' 
-#' The \code{thesaurus} argument may be used to relate alternate species names to the species names used in \code{PSDlit}. For example, you (or your data) may use \dQuote{Bluegill Sunfish}, but \dQuote{Bluegill} is used in \code{PSDlit}. The alternate species name can be used here if it is defined in a named vector (or list) given to \code{thesarus=}. The alternate species name is the value and the species name in \code{PSDlit} is the name in this vector/list - e.g., \code{c("Bluegill"="Bluegill Sunfish")}. See the examples for a demonstration.
-#' 
-#' Some species have length categories separated by sub-group. For example, length categories exist for both lentic and lotic populations of Brown Trout. The length values for a sub-group may be obtained by either including the species name in \code{species} and the sub-group name in \code{group} or by using the combined species and sub-group name, with the sub-group name in parentheses, in \code{species}. Both methods are demonstrated in the examples. Note that an error is returned if a species has sub-groups but neither method is used to define the sub-group.
 #'
+#' Some species have length categories separated by sub-group. For example, length categories exist for both lentic and lotic populations of Brown Trout. The length values for a sub-group may be obtained by either including the species name in \code{species} and the sub-group name in \code{group} or by using the combined species and sub-group name, with the sub-group name in parentheses, in \code{species}. Both methods are demonstrated in the examples. Note that an error is returned if a species has sub-groups but neither method is used to define the sub-group.#' 
+#' 
 #' A zero is included in the first position of the returned vector if \code{incl.zero=TRUE}. This is useful when computing PSD values with a data.frame that contains fish smaller than the stock length.
 #'
 #' Additional lengths may be added to the returned vector with \code{addLens}. Names for these lengths can be included as names in \code{addLens} or separately in \code{addNames}. If \code{addNames} is NULL and \code{addLens} is not named then the default category names will be the lengths from \code{addLens}. The \code{addLens} argument is useful for calculating PSD values that are different from the Gabelhouse lengths.
@@ -72,26 +69,15 @@
 #' psdVal("Bluegill",units="in",addLens=c("MinLen"=7))
 #' psdVal("Bluegill",units="in",addLens=c("MinSlot"=7,"MaxSlot"=9))
 #' 
-#' #===== Values for species in PSDlit but named differently ... use thesaurus
-#' #----- Single species in thesaurus ... not that useful
-#' psdVal("Bluegill Sunfish",thesaurus=c("Bluegill"="Bluegill Sunfish"))
-#' #----- Multiple species in thesaurus (i.e., possibly a global thesaurus)
-#' thes <- c("Bluegill"="Bluegill Sunfish",
-#'           "Rainbow Darter"="Rainbow Perch",
-#'           "Pumpkinseed"="Pumpkinseed Sunfish",
-#'           "Lake Trout"="Lean Lake Trout")
-#' psdVal("Bluegill Sunfish",thesaurus=thes)
-#' psdVal("Lean Lake Trout",thesaurus=thes)
-#' 
 #' @export psdVal
-psdVal <- function(species="List",thesaurus=NULL,
-                   group=NULL,units=c("mm","cm","in"),
+psdVal <- function(species="List",group=NULL,units=c("mm","cm","in"),
                    addLens=NULL,addNames=NULL,
                    incl.zero=TRUE,showJustSource=FALSE,dat=NULL) {
   units <- match.arg(units)
+
   #====== If dat is null then load PSDlit into dat ... then do some checking,
   #       and return a data.frame with info for just that species/group
-  if (is.null(dat)) dat <- iPrepPSDlit(thesaurus)
+  if (is.null(dat)) dat <- FSA::PSDlit
   dat <- iPSDGetSpecies(dat,species,group)
   
   #====== Prepare Result as longs as dat was not returned as NULL
@@ -130,46 +116,6 @@ psdVal <- function(species="List",thesaurus=NULL,
       PSDvec
     }
   }
-}
-
-
-# ==============================================================================
-# Internal -- prepare PSDlit by loading it and replacing its default names with
-#             names in the thesaurus, if any
-# ==============================================================================
-iPrepPSDlit <- function(thesaurus) {
-  # Load PSDlit into dat in this function namespace
-  dat <- FSA::PSDlit
-  if (!is.null(thesaurus)) {
-    # Some sanity checks on thesaurus
-    if (!(is.vector(thesaurus) | is.list(thesaurus)))
-      STOP("'thesaurus' must be either a vector or list. ",
-           "Make sure it is not 'factor'ed.")
-    if (length(names(thesaurus))==0)
-      STOP("Values in 'thesaurus' must be named (with species names from 'PSDlit'.")
-    if (!is.character(thesaurus))
-      STOP("Values in 'thesaurus' must be strings of species names.")
-    # thesaurus appears to be a named vector/list of strings ... start processing
-    # Alphabetize names in thesaurus to match PSDlit
-    thesaurus <- thesaurus[order(names(thesaurus))]
-    # Remove name from thesaurus if not in dat/PSDlit
-    thes.nokeep <- which(!names(thesaurus) %in% unique(dat$species))
-    if (length(thes.nokeep)>0) {
-      MESSAGE("The following species names were in 'thesaurus' but do ",
-              "not have an entry in 'PSDlit' and will be ignored: ",
-              iStrCollapse(names(thesaurus)[thes.nokeep]),".")
-      thesaurus <- thesaurus[-thes.nokeep]      
-    }
-    # Find species in dat/PSDlit in kept thesaurus and change names to thesaurus names
-    if (length(thesaurus)>0) {
-      thes.pos <- which(dat$species %in% names(thesaurus))
-      dat$species[thes.pos] <- unlist(thesaurus)
-      # Re-alphabetize dat/PSDlit
-      dat <- dat[order(dat$species),]
-    }
-  }
-  # Return dat/PSDlit
-  dat
 }
 
 # ==============================================================================

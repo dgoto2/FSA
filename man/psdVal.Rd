@@ -6,7 +6,6 @@
 \usage{
 psdVal(
   species = "List",
-  thesaurus = NULL,
   group = NULL,
   units = c("mm", "cm", "in"),
   addLens = NULL,
@@ -18,8 +17,6 @@ psdVal(
 }
 \arguments{
 \item{species}{A string that contains the species name for which to find Gabelhouse lengths. See details.}
-
-\item{thesaurus}{A named vector or list for providing alternative species names (the values in the list) that correspond to specific names in \code{PSDlit} (the names in the list). See details and examples.}
 
 \item{group}{A string that contains the sub-group of \code{species} for which to find the Gabelhouse lengths; e.g., things like \dQuote{landlocked}, \dQuote{lentic}.}
 
@@ -44,9 +41,7 @@ Returns a vector with the five Gabelhouse lengths for a chosen species.
 \details{
 Finds the Gabelhouse lengths from \code{data(PSDlit)} for the species given in \code{species}. The species name must be spelled exactly (including capitalization) as it appears in \code{data(PSDlit)}. Type \code{psdVal()} to see the list of species and how they are spelled.
 
-The \code{thesaurus} argument may be used to relate alternate species names to the species names used in \code{PSDlit}. For example, you (or your data) may use \dQuote{Bluegill Sunfish}, but \dQuote{Bluegill} is used in \code{PSDlit}. The alternate species name can be used here if it is defined in a named vector (or list) given to \code{thesarus=}. The alternate species name is the value and the species name in \code{PSDlit} is the name in this vector/list - e.g., \code{c("Bluegill"="Bluegill Sunfish")}. See the examples for a demonstration.
-
-Some species have length categories separated by sub-group. For example, length categories exist for both lentic and lotic populations of Brown Trout. The length values for a sub-group may be obtained by either including the species name in \code{species} and the sub-group name in \code{group} or by using the combined species and sub-group name, with the sub-group name in parentheses, in \code{species}. Both methods are demonstrated in the examples. Note that an error is returned if a species has sub-groups but neither method is used to define the sub-group.
+Some species have length categories separated by sub-group. For example, length categories exist for both lentic and lotic populations of Brown Trout. The length values for a sub-group may be obtained by either including the species name in \code{species} and the sub-group name in \code{group} or by using the combined species and sub-group name, with the sub-group name in parentheses, in \code{species}. Both methods are demonstrated in the examples. Note that an error is returned if a species has sub-groups but neither method is used to define the sub-group.#' 
 
 A zero is included in the first position of the returned vector if \code{incl.zero=TRUE}. This is useful when computing PSD values with a data.frame that contains fish smaller than the stock length.
 
@@ -87,17 +82,6 @@ psdVal("Bluegill",units="in",addLens=c(7,9),addNames=c("MinSlot","MaxSlot"))
 #-----   with a named vector in addLens=
 psdVal("Bluegill",units="in",addLens=c("MinLen"=7))
 psdVal("Bluegill",units="in",addLens=c("MinSlot"=7,"MaxSlot"=9))
-
-#===== Values for species in PSDlit but named differently ... use thesaurus
-#----- Single species in thesaurus ... not that useful
-psdVal("Bluegill Sunfish",thesaurus=c("Bluegill"="Bluegill Sunfish"))
-#----- Multiple species in thesaurus (i.e., possibly a global thesaurus)
-thes <- c("Bluegill"="Bluegill Sunfish",
-          "Rainbow Darter"="Rainbow Perch",
-          "Pumpkinseed"="Pumpkinseed Sunfish",
-          "Lake Trout"="Lean Lake Trout")
-psdVal("Bluegill Sunfish",thesaurus=thes)
-psdVal("Lean Lake Trout",thesaurus=thes)
 
 }
 \references{
