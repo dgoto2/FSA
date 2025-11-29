@@ -1,4 +1,5 @@
 # FSA 0.10.9000
+* Updated the PSD and Relative Weight computation articles to reflect the changes to `psdVal()`, `psdAdd()`, `wsVal()`, and `wrAdd()`.
 * `chapmanRobson()`: Added catch for when n+T<1 and n+T<2. This addresses [#131](https://github.com/fishR-Core-Team/FSA/issues/131)).
 * `metaM()`: Added `method="HamelCope"` to address [#133](https://github.com/fishR-Core-Team/FSA/issues/133). A few minor edits to documentation.
 * `psdAdd()`: Addressed bugs as described in [#136](https://github.com/fishR-Core-Team/FSA/issues/136)) and [#137](https://github.com/fishR-Core-Team/FSA/issues/137). Added `thesaurus` functionality. Reworked examples in documentation. Reworked testing framework. Thanks to Dave Glover.

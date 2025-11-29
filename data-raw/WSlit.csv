@@ -221,8 +221,8 @@ Spotted Sunfish,NA,TL,English,75,EmP,2.75,8,-3.3468,3.3343,NA,Bonvechio et al. (
 Spotted Sunfish,NA,TL,metric,75,EmP,70,200,-5.3739,3.3343,NA,Bonvechio et al. (2023),also used RLP and EmP-quadratic but did not recommend
 Striped Bass,NA,TL,English,75,RLP,6,NA,-3.358,3.007,NA,Brown and Murphy (1991b),none
 Striped Bass,NA,TL,metric,75,RLP,150,NA,-4.924,3.007,NA,Brown and Murphy (1991b),none
-Spriped Bass (landlocked),NA,TL,metric,75,RLP,150,NA,-4.924,3.007,NA,Brown and Murphy (1991b),Not clear just landlocked; added to simplify use with PSDlit
-Spriped Bass (landlocked),NA,TL,metric,75,RLP,150,NA,-4.924,3.007,NA,Brown and Murphy (1991b),Not clear just landlocked; added to simplify use with PSDlit
+Striped Bass (landlocked),NA,TL,English,75,RLP,6,NA,-3.358,3.007,NA,Brown and Murphy (1991b),Not clear just landlocked; added to simplify use with PSDlit
+Striped Bass (landlocked),NA,TL,metric,75,RLP,150,NA,-4.924,3.007,NA,Brown and Murphy (1991b),Not clear just landlocked; added to simplify use with PSDlit
 Striped Bass X White Bass,NA,TL,English,75,RLP,4.5,NA,-3.448,3.139,NA,Brown and Murphy (1991b),same as Palmetto Bass
 Striped Bass X White Bass,NA,TL,metric,75,RLP,115,NA,-5.201,3.139,NA,Brown and Murphy (1991b),same as Palmetto Bass
 Suwannee Bass,NA,TL,metric,75,EmP,110,NA,-0.106,-1.363,0.995,Bonvechio et al. (2010),none
