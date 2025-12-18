@@ -141,11 +141,10 @@ Nile Tilapia,NA,TL,metric,75,EmP,80,280,-8.7951,6.751,-0.8479,Emiroglu et al. (2
 Nipple-Lip Scraper,NA,TL,metric,75,EmP,70,360,-5.966,3.833,-0.181,Emiroglu et al. (2020),only from Turkey
 Northern Pike,NA,TL,English,75,RLP,4,NA,-3.745,3.096,NA,Anderson and Neumann (1996),none
 Northern Pike,NA,TL,metric,75,RLP,100,NA,-5.437,3.096,NA,Anderson and Neumann (1996),none
-Northern Pikeminnow,NA,FL,English,75,RLP,10,NA,-3.328,2.986,NA,Parker et al. (1995),same as Northern Squawfish
-Northern Pikeminnow,NA,FL,metric,75,RLP,250,NA,-4.886,2.986,NA,Parker et al. (1995),same as Northern Squawfish
+Northern Pikeminnow,NA,FL,metric,50,EmP,90,580,-5.258,3.135,NA,Voss and Quist (2025),"Other methods and quartiles used, but this was only one that was length-unbiased"
+Northern Pikeminnow (original),NA,FL,English,75,RLP,10,NA,-3.328,2.986,NA,Parker et al. (1995),Voss and Quist (2025) note that these equations are problematic and should not be used
+Northern Pikeminnow (original),NA,FL,metric,75,RLP,250,NA,-4.886,2.986,NA,Parker et al. (1995),Voss and Quist (2025) note that these equations are problematic and should not be used
 Northern Snakehead,NA,TL,metric,75,RLP,200,NA,-5.142,3.0418,NA,Kim et al. (2019),from 4 populations
-Northern Squawfish,NA,FL,English,75,RLP,10,NA,-3.328,2.986,NA,Parker et al. (1995),same as Northern Pikeminnow
-Northern Squawfish,NA,FL,metric,75,RLP,250,NA,-4.886,2.986,NA,Parker et al. (1995),same as Northern Pikeminnow
 Paddlefish,female,BL,English,75,RLP,11,NA,-2.822,2.782,NA,Brown and Murphy (1993),none
 Paddlefish,female,BL,metric,75,RLP,280,NA,-4.073,2.782,NA,Brown and Murphy (1993),none
 Paddlefish,male,BL,English,75,RLP,11,NA,-3.063,2.91,NA,Brown and Murphy (1993),none
