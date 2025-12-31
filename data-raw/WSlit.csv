@@ -3,7 +3,7 @@ Aegean Chub,NA,TL,metric,75,EmP,70,220,-3.801,1.783,0.329,Giannetto et al. (2012
 African Sharptooth Catfish,NA,TL,metric,75,EmP,180,450,-3.668,1.885,0.2087,Emiroglu et al. (2018),only from Sakarya River Basin (Turkey)
 Alabama Bass,NA,TL,metric,75,EmP,150,550,-5.6189,3.284,NA,Sammons et al. (2025),RLP and EmP (quadratic) models not recommended
 Alabama Bass,NA,TL,English,75,EmP,6,22,-3.5339,3.175,NA,Sammons et al. (2025),RLP and EmP (quadratic) models not recommended
-Alabama Bass (original),NA,TL,metric,75,RLP,100,NA,-5.598,3.2904,NA,Dicenzo et al. (1995),min.len not made clear (assumed same as Spotted Bass); same as Spotted Bass (Alabama subspecies)
+Alabama Bass (original),NA,TL,metric,75,RLP,100,NA,-5.598,3.2904,NA,Dicenzo et al. (1995),HAS BEEN REVISED; min.len not made clear (assumed same as Spotted Bass)
 Ankara Nase,NA,TL,metric,75,EmP,70,240,-10.017,7.402,-0.971,Emiroglu et al. (2020),only from Turkey
 Arctic Grayling,NA,TL,metric,75,RLP,150,NA,-5.241,3.083,NA,Gilham et al. (2021),authors note that either RLP or EmP method may be used
 Arctic Grayling,NA,TL,metric,75,EmP,150,NA,-5.279,3.096,NA,Gilham et al. (2021),authors note that either RLP or EmP method may be used
@@ -142,8 +142,8 @@ Nipple-Lip Scraper,NA,TL,metric,75,EmP,70,360,-5.966,3.833,-0.181,Emiroglu et al
 Northern Pike,NA,TL,English,75,RLP,4,NA,-3.745,3.096,NA,Anderson and Neumann (1996),none
 Northern Pike,NA,TL,metric,75,RLP,100,NA,-5.437,3.096,NA,Anderson and Neumann (1996),none
 Northern Pikeminnow,NA,FL,metric,50,EmP,90,580,-5.258,3.135,NA,Voss and Quist (2025),"Other methods and quartiles used, but this was only one that was length-unbiased"
-Northern Pikeminnow (original),NA,FL,English,75,RLP,10,NA,-3.328,2.986,NA,Parker et al. (1995),Voss and Quist (2025) note that these equations are problematic and should not be used
-Northern Pikeminnow (original),NA,FL,metric,75,RLP,250,NA,-4.886,2.986,NA,Parker et al. (1995),Voss and Quist (2025) note that these equations are problematic and should not be used
+Northern Pikeminnow (original),NA,FL,English,75,RLP,10,NA,-3.328,2.986,NA,Parker et al. (1995),HAS BEEN REVISED; Voss and Quist (2025) note that these equations are problematic and should not be used
+Northern Pikeminnow (original),NA,FL,metric,75,RLP,250,NA,-4.886,2.986,NA,Parker et al. (1995),HAS BEEN REVISED; Voss and Quist (2025) note that these equations are problematic and should not be used
 Northern Snakehead,NA,TL,metric,75,RLP,200,NA,-5.142,3.0418,NA,Kim et al. (2019),from 4 populations
 Paddlefish,female,BL,English,75,RLP,11,NA,-2.822,2.782,NA,Brown and Murphy (1993),none
 Paddlefish,female,BL,metric,75,RLP,280,NA,-4.073,2.782,NA,Brown and Murphy (1993),none
@@ -211,9 +211,8 @@ Smallmouth Buffalo,NA,TL,metric,75,RLP,200,NA,-5.298,3.208,NA,Bister et al. (200
 South European Roach,NA,TL,metric,75,EmP,60,200,-4.043,1.919,0.315,Giannetto et al. (2016),none
 Spotted Bass,NA,TL,metric,75,EmP,150,490,-5.3467,3.197,NA,Sammons et al. (2025),also used RLP and EmP-quadratic but did not recommend
 Spotted Bass,NA,TL,English,75,EmP,6,19.25,-3.3641,3.064,NA,Sammons et al. (2025),also used RLP and EmP-quadratic but did not recommend
-Spotted Bass (original),NA,TL,English,75,RLP,4,NA,-3.533,3.215,NA,Wiens et al. (1996),none
-Spotted Bass (original),NA,TL,metric,75,RLP,100,NA,-5.392,3.215,NA,Wiens et al. (1996),none
-Spotted Bass (Alabama subspecies),NA,TL,metric,75,RLP,100,NA,-5.598,3.2904,NA,Dicenzo et al. (1995),min.len not made clear (assumed same as Spotted Bass); same as Alabama Bass
+Spotted Bass (original),NA,TL,English,75,RLP,4,NA,-3.533,3.215,NA,Wiens et al. (1996),HAS BEEN REVISED
+Spotted Bass (original),NA,TL,metric,75,RLP,100,NA,-5.392,3.215,NA,Wiens et al. (1996),HAS BEEN REVISED
 Spotted Gar,NA,TL,English,75,RLP,10,NA,-4.388,3.431,NA,Bister et al. (2000),none
 Spotted Gar,NA,TL,metric,75,RLP,250,NA,-6.551,3.431,NA,Bister et al. (2000),none
 Spotted Sunfish,NA,TL,English,75,EmP,2.75,8,-3.3468,3.3343,NA,Bonvechio et al. (2023),also used RLP and EmP-quadratic but did not recommend

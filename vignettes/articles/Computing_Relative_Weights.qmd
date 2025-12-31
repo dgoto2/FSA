@@ -29,7 +29,7 @@ The following packages are used herein. Note that the `FSA` functions described 
 #| results: hide
 #| message: false
 library(FSA)
-library(dplyr)  # mutate, select, group_by, summarize
+library(dplyr)  # mutate, select, group_by, summarize, case_when
 ```
 
 
@@ -42,12 +42,12 @@ wsVal("Bluegill")
 
 The results returned from `wsVal()` are:
 
-- `species`: species of fish asked for. If left blank then a list of all species for which a standard weight equation exists in `WSlit` will be shown.
+- `species`: species of fish asked for.
 - `group`: the sub-group for the species. Some species have separate standard weight equations for sub-groups (e.g,. `male` or `female`, or `lentic` and `lotic`). If `group` does not appear in the output then there is no sub-group for that species (as illustrated here). The sub-group can be chosen with `group=` in `wsVal()` as demonstrated later.^[Leave `group=` at the default `NULL` for species without sub-group equations.]
-- `measure`: the length measure used (will generally be `TL` for total length, but could be `FL` for fork length, `BL` for body length, or `CL` for caudal length depending on the species).
-- `units`: the units for which the equation was developed. The default is `metric` which has length in mm and weight in grams. However, `English` can also be used which has lengths in inches and weight in pounds. These are the only two "units" for which the equation can be returned; thus, if you recorded lengths and weights in different units you will need to adjust your data accordingly (or adjust the standard weights computed from the equations (see below) accordingly).
-- `ref`: the quantile used when developing the standard weight equation. The 75th percentile is used for most species, but some species have alternatives (50th or 25th percentile). Alternatives for a species can be chosen with `ref=` in `wsVal()`.^[For species with only one possible `ref`, then `ref=` should be left at the default `NULL`.]
-- `method`: the method used to develop the standard weight equation. This will usually be `RLP` (regression-line-percentile) or `EmP` (empirical percentile) but is `Other` only for Bluegill, as shown here. Some (very few) species have equations for both methods. In these instances, you will need to choose which to use with `method=` in `wsVal()`.^[For species where only one method is available then leave `method=` at the default `NULL`.]
+- `measure`: the length measure used (will generally be `TL` for total length, but depending on the species could be `FL` for fork length, `BL` for body length, or `CL` for caudal length).
+- `units`: the units for which the equation was developed. The default is `metric` which has length in mm and weight in grams. However, `English` can also be used which has lengths in inches and weight in pounds.^[A few species have an equation for only one set of units.] These are the only two "units" for which the equation can be returned; thus, if you recorded lengths and weights in different units you will need to adjust your data accordingly (or adjust the standard weights computed from the equations (see below) accordingly).
+- `ref`: the quantile used when developing the standard weight equation. The 75th percentile is used for most species, but some species have alternatives (50th or 25th percentile).^[Alternatives for a species can be chosen with `ref=` in `wsVal()`. For species with only one possible `ref`, then `ref=` should be left at the default `NULL`.]
+- `method`: the method used to develop the standard weight equation. This will usually be `RLP` (regression-line-percentile) or `EmP` (empirical percentile) but is `Other` only for Bluegill, as shown here. Some (very few) species have equations for both methods.^[For species with multiple `method`s, you will need to choose which to use with `method=` in `wsVal()`. For species where only one method is available then leave `method=` at the default `NULL`.]
 - `min.TL`: the minimum length for which the standard weight equation is appropriate.^[The postfix after the period will be replaced with the `measure` type (here `TL` but for some species `FL`, `BL`, or `CL`).]
 - `max.TL`: the maximum length for which the standard weight equation is appropriate. Maximum lengths have not been specified for all species and, thus, may not appear in all outputs (e.g., for Bluegill here).
 - `int`: the intercept, **on the common logarithm (i.e., log10) scale**, for the standard weight equation.
@@ -68,7 +68,7 @@ Blue Sucker is an example where some of the "optional" values are returned (e.g.
 wsVal("Blue Sucker",units="English")
 ```
 
-Use of `wsVal()` requires spelling (and capitalizing) the name as it appears in `WSlit`. One can see all species names available in `WSlit` with `wsVal()` without any arguments.
+Use of `wsVal()` requires spelling (and capitalizing) the species name as it appears in `WSlit`. One can see all species names available in `WSlit` with `wsVal()` without any arguments.
 
 ```{r}
 wsVal()
@@ -117,7 +117,7 @@ wsVal("Ruffe")
 wsVal("Ruffe",ref=50)
 ```
 
-There are two species (Chinook Salmon and Striped Bass) that appear to have sub-groups (i.e., "landlocked") but only that one specific sub-group appears in `WSlit`. The standard weight literature for these species did not identify the equation as only being for "landlocked" populations. However, these entries were added to facilitate use when calculating proportional size distribution (PSD) metrics,^[See [this vignette]().] which were defined just for "landlocked" populations, and relative weight metrics with the same data.frame.^[As illustrated in [this companion vignette().] The standard weight equations for these species can be accessed by either just the species name or the species name with the group in parentheses. However, note that they are the exact same information.
+There are two species (Chinook Salmon and Striped Bass) that appear to have sub-groups (i.e., "landlocked") but only that one specific sub-group appears in `WSlit`. The standard weight literature for these species did not identify the equation as only being for "landlocked" populations. However, these entries were added to facilitate use when calculating proportional size distribution (PSD) metrics,^[See [this vignette](https://fishr-core-team.github.io/FSA/articles/Computing_PSDs.html).] which were defined just for "landlocked" populations, and relative weight metrics with the same data.frame.^[As illustrated in [this companion vignette]().] The standard weight equations for these species can be accessed by either just the species name or the species name with the group in parentheses. However, note that they are the exact same information.
 
 ```{r}
 wsVal("Striped Bass")
@@ -162,7 +162,7 @@ This calculation suggests that the standard weight for a 350 mm Largemouth Bass 
 100*650/ex1
 ```
 
-This indicates that the individual is (slightly) heavier than a standard fish of the same length as this values is greater than 100.
+This indicates that the individual is (slightly) heavier than a "standard fish" of the same length as this values is greater than 100.
 
 ## For Quadratic Equation
 A similar process can be followed for a species where the standard weight equation includes a quadratic term. The only "trick" here is to include the quadratic term multiplied by the **square** of the log10-transformed observed length when computing the standard weight. This calculation is illustrated below with a 500 mm and 1010 g Blue Sucker.
@@ -184,15 +184,15 @@ A few things to consider when calculating relative weights for individuals.
 # Calculate Relative Weights for All of One Species
 It is not common to compute the standard and relative weights for a single individual as was done in the previous section. Rather, it is more useful to calculate these values for all individuals in a sample, and then summarize those values for an overall assessment of the condition of those individuals.
 
-Consider the `CiscoTL` data.frame distributed with the `FSAdata` package that contains the lengths (mm) and weights (g) of Cisco (*Coregonus artedii*) sampled from Trout Lake, WI, USA over a 25 year period. Note that there are lots of missing weights in this data.frame.
+Consider the `CiscoTL` data.frame distributed with the `FSAdata` package that contains the lengths (mm) and weights (g) of Cisco (*Coregonus artedii*) sampled from Trout Lake, WI, USA over a 25 year period. Note that there are many missing weights in this data.frame.
 
 ```{r}
-data("CiscoTL",package="FSAdata")
+data("CiscoTL",package="FSAdata")  # retrieve the data.frame
 peek(CiscoTL,n=10)
 ```
 
 ## "Manual" Calculations
-The relative weight calculation begins by finding the specifics of the standard weight equation for Cisco.
+The relative weight calculation begins by finding the specifics of the standard weight equation for Cisco and assigning them to an object (here, `wsC`).
 
 ```{r}
 ( wsC <- wsVal("Cisco") )
@@ -209,7 +209,7 @@ peek(CiscoTL,n=10)
 ```
 
 ## Using the `WrAdd()` Convenience Function
-`wrAdd()` can be used to add a relative weight variable to a data.frame for **all** species in the data.frame for which a standard weight equation exists.^[Though its use is illustrated here on a data.frame with only one species. See the next sections for an example with more species.] The main argument to `wrAdd()` is a formula of the form `weight~length+species` where `weight` is the observed weight variable, `length` is the observed length variable, and `species` is the name of the species variable. One constraint here is that the names in `species` must be spelled (and capitalized) exactly as in `WSlit`. In these data, the species name is in `spname` but is in all capital letters as "CISCO", rather than the required "Cisco". `capFirst()`^[From `FSA`.] may be used to convert a word to a form where just the first letter is capitalized, and  is used below.^[Note that the `CiscoTL` data.frame was re-read so that the additions in the previous section were removed.]
+`wrAdd()` can be used to add a relative weight variable to a data.frame for **all** species in the data.frame for which a standard weight equation exists.^[Though its use is illustrated here on a data.frame with only one species. See the next sections for an example with more species.] The main argument to `wrAdd()` is a formula of the form `weight~length+species` where `weight` is the name of the observed weight variable, `length` is the name of the observed length variable, and `species` is the name of the species variable. One constraint here is that the species names in the `species` variable must be spelled (and capitalized) exactly as in `WSlit`. In these data, the species name is in `spname` but is in all capital letters as "CISCO", rather than the required "Cisco". `capFirst()`^[From `FSA`.] may be used to convert a word to a form where just the first letter is capitalized, and  is used below.^[Note that the `CiscoTL` data.frame was re-read so that the additions in the previous section were removed.]
 
 ```{r}
 data("CiscoTL",package="FSAdata")
@@ -218,7 +218,7 @@ CiscoTL <- CiscoTL |>
 peek(CiscoTL,n=10)
 ```
 
-A more general approach to deal with species that are spelled differently than expected in `WSlit` is to provide a named list or vector that defines how the original species names (i.e., the values in the vector) relate to the species names required by `WSlit` (i.e., the names in the vector) to `thesaurus=`. `wrAdd()` will match the two names appropriately while creating the relative weight variable.
+A more general approach to deal with species that are spelled differently than expected in `WSlit` is to provide a named list or vector that defines how the original species names (i.e., the items in the vector to the right of the `=`) relate to the species names required by `WSlit` (i.e., the names in the vector to the left of the `=`) to `thesaurus=`. `wrAdd()` will match the two names appropriately while creating the relative weight variable.
 
 ```{r}
 CiscoTL <- CiscoTL |>
@@ -228,10 +228,10 @@ peek(CiscoTL,n=10)
 
 `thesaurus=` can be used even if only some of the species names are non-"standard." Additionally, the named list/vector in `thesaurus=` can contain names that don't exist in the original data.frame. Thus, a global thesaurus containing all species that *could* be encountered could be created, for example as an agency-wide definition, and used with a variety of specific data.frames. 
 
-`wrAdd()` handles species that have more than one standard weight equation^[As described previously.] with `WsOpts=`. For example, consider adding a relative weight variable to the `RuffeSLRH92` data.frame distributed with `FSAdata`. Note that there is no species variable, which is needed by `wrAdd()`.^[Note that `wrAdd()` is more convenient for data.frames with multiple species as will be illustrated in the next section.] Additionally, for simplicity of presentation, I removed several other variables that are not needed for this example.
+`wrAdd()` handles species that have more than one standard weight equation^[As described previously.] with `WsOpts=`. For example, consider adding a relative weight variable to the `RuffeSLRH92` data.frame distributed with `FSAdata`. Note that there is no species variable, which is needed by `wrAdd()`, so one was added with `mutate()`.^[Note that `wrAdd()` is more convenient for data.frames with multiple species as will be illustrated in the next section.] Additionally, for simplicity of presentation, I removed several other variables (with `select()`) that are not needed for this example.
 
 ```{r}
-data("RuffeSLRH92",package="FSAdata")
+data("RuffeSLRH92",package="FSAdata")  # retrieve the data.frame
 RuffeSLRH92 <- RuffeSLRH92 |>
   mutate(species="Ruffe") |>
   select(species,length,weight,sex)
@@ -255,17 +255,17 @@ peek(RuffeSLRH92,n=10)
 ```
 
 # Calculate Relative Weights for All of Multiple Species
-The real value of `wrAdd()` is that it can be used to efficiently add a relative weight variable for multiple species in a single data.frame. This is illustrated below with examples for a variety of scenarios.
+The real value of `wrAdd()` is that it can be used to efficiently add a relative weight variable for multiple species in a single data.frame. This is illustrated below for a variety of scenarios.
 
 ## "Good" Names and No Groups
 `InchLake2` distributed with `FSAdata` contains lengths and weights for several species captured from Inch Lake. These data provide a simple example for using `wrAdd()` because all species names are spelled as required and none of the species have sub-groups.^[See the next section for how to deal with these issues.]
 
 ```{r}
-data("InchLake2",package="FSAdata")
+data("InchLake2",package="FSAdata")  # retrieve the data.frame
 peek(InchLake2,n=10)
 ```
 
-A complication here is that length and weight are in "mixed" units; i.e., inches for length and grams for weight. One or the other must be converted to the same unit type. Below length is converted to mm.
+A complication here is that length and weight are in "mixed" units; i.e., inches for length and grams for weight. One or the other must be converted to the same unit type. Below length is converted to mm before `wrAdd()` is used to add a relative weight variable.
 
 ```{r}
 InchLake2 <- InchLake2 |>
@@ -277,22 +277,20 @@ peek(InchLake2,n=10)
 Note that species without known standard weight equations in `WSlit` (e.g., Bluntnose Minnow) will have `NA` for the relative weight variable, as will individuals with lengths outside the range of lengths for which the standard weight equation should be applied.
 
 ## "Bad" Names and No Groups
-Now consider the `BGHRfish` data.frame (distributed with the `FSAdata` package) that has the lengths (mm) and weights (g) of three species -- Smallmouth Bass, Largemouth Bass, and Bluegill --  from Big Hill Reservoir, KS. These four species do not have sub-groups defined in `WSlit`. However, observing the data below^[And [the documentation](https://fishr-core-team.github.io/FSAdata/reference/Herman.html).] shows that the species variable (`specCode`) contains codes for the species names rather than the names required by `PSDlit`.
+Now consider the `BGHRfish` data.frame (distributed with the `FSAdata` package) that has the lengths (mm) and weights (g) of three species -- Smallmouth Bass, Largemouth Bass, and Bluegill --  from Big Hill Reservoir, KS. These three species do not have sub-groups defined in `WSlit`, but upon observing the data below^[And [the documentation](https://fishr-core-team.github.io/FSAdata/reference/Herman.html).] it is seen that the species variable (`specCode`) contains codes for the species names rather than the names required by `PSDlit`.
 
 ```{r}
-data(BGHRfish,package="FSAdata")
+data(BGHRfish,package="FSAdata")  # retrieve the data.frame
 peek(BGHRfish,n=10)
 ```
 
-One complicating factor with these data is that `wrAdd()` expects a string in `species` rather than a numeric like `specCode`. Thus, below `specCode` will be converted to a character before using `wrAdd()`.
-
-One way to deal with the issue of "bad" species names is to use a named list or vector that defines how the names from `WSlit` should be matched to the names in the data.frame. For this purpose, the species names in `WSlit` are the names in the vector (i.e., before the `=`) and the species names in the data.frame are the values in the vector (i.e., after the `=`).^[The numeric species codes are in parentheses as `specCode` will be converted to a string before using `wrAdd()`.]
+One way to deal with the issue of "bad" species names is to use a named list or vector that defines how the names from `WSlit` should be matched to the names in the data.frame. For this purpose, the species names in `WSlit` are the names in the vector (i.e., before the `=`) and the species names in the data.frame are the items in the vector (i.e., after the `=`).^[The numeric species codes are in parentheses as `specCode` will be converted to a string before using `wrAdd()`.]
 
 ```{r}
 thes <- c("Smallmouth Bass"="116","Largemouth Bass"="118","Bluegill"="122")
 ```
 
-This list/vector is then given to `thesaurus=` in `wrAdd()` which will perform the name matching while creating the GH length categories.
+This list/vector is then given to `thesaurus=` in `wrAdd()` which will perform the name matching while creating the GH length categories. However, one complicating factor with these data is that `wrAdd()` expects a string in `species` (and, thus, `thesaurus=`) rather than a numeric like `specCode`. Thus, `specCode` is converted to a character below before using `wrAdd()`.
 
 ```{r}
 BGHRfish <- BGHRfish |>

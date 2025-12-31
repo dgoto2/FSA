@@ -7,7 +7,7 @@
 * `psdVal()`: Added `dat=` to allow more flexibility when called from `psdAdd()`.
 * `PSDWRTest`: Added for testing PSD and relative weight functions.
 * `wrAdd()`: Addressed bugs similar to those for `psdAdd()`. Added `thesaurus` functionality. Reworked examples in documentation. Reworked testing framework (especially expanded validation of results with hand-calculations).
-* `wSlit`: Added info for Flier and Longear Sunfish to address [#122](https://github.com/fishR-Core-Team/FSA/issues/122)). Also updated information for Alabama Bass, Spotted Bass, and Northern Pikeminnow (further removed Northern Squawfish (synonym of Northern Pikeminnow that is no longer used)). Duplicated lines that combine `species` and `group` to partially address [#137](https://github.com/fishR-Core-Team/FSA/issues/137).
+* `wSlit`: Added info for Flier and Longear Sunfish to address [#122](https://github.com/fishR-Core-Team/FSA/issues/122)). Also updated information for Alabama Bass (further removed Spotted Bass (Alabama subspecies)), Spotted Bass, and Northern Pikeminnow (further removed Northern Squawfish (synonym of Northern Pikeminnow that is no longer used)). Duplicated lines that combine `species` and `group` to partially address [#137](https://github.com/fishR-Core-Team/FSA/issues/137).
 * `wsVal()`: Added `dat=` to allow more flexibility when called from `wrAdd()`.
 
 # FSA 0.10.0

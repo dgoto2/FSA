@@ -25,7 +25,7 @@ The following packages are used herein. Note that the `FSA` functions described 
 #| results: hide
 #| message: false
 library(FSA)
-library(dplyr)  # mutate, select, group_by, summarize
+library(dplyr)  # mutate, select, filter, case_when
 ```
 
 
@@ -37,14 +37,14 @@ Five-cell Gabelhouse (GH) length categories have been deveoped for a number of f
 psdVal("Bluegill")
 ```
 
-The default is to return lengths in millimeters; however, they can be returned in centimeters or inches with `units=`
+The default is to return lengths in millimeters; however, they can be returned in centimeters or inches with `units=`.^[A few species do not have define English unit lengths.]
 
 ```{r}
 psdVal("Bluegill",units="cm")
 psdVal("Bluegill",units="in")
 ```
 
-By default, a sixth cell is included that is labeled as "substock" and will always have the value of 0. This can be useful for data that includes individuals shorter than the stock length. Use `incl.zero=FALSE` to exclude this category.
+By default, a sixth cell is included that is labeled as "substock" and will always have the value of 0. This can be useful for some analyses with data that includes individuals shorter than the stock length. Use `incl.zero=FALSE` to exclude this category.
 
 ```{r}
 psdVal("Bluegill",incl.zero=FALSE)
@@ -120,7 +120,7 @@ psdVal("Largemouth Bass",addLens=c("minSlot"=254,"maxSlot"=356))
 Suppose that we want to add a variable with the GH length categories to the data.frame of lengths (along with capture location) for Yellow Perch from Saginaw Bay, MI in `YPerchSB1` (distributed with the `FSAdata` package). Note here that lengths are in **centimeters**.
 
 ```{r}
-data(YPerchSB1,package="FSAdata")
+data(YPerchSB1,package="FSAdata")  # retrieve the data.frame
 peek(YPerchSB1,n=10)
 ```
 
@@ -147,38 +147,38 @@ peek(YPerchSB1,n=10)
 ```
 
 ## Use the `psdAdd()` Convenience Function
-`psdAdd()` can be used to add a length categorization variable to a data.frame for **all** species in the data.frame for which the GH length categories exists.^[Here, however, it is being applied to a data.frame with only one species.] The main argument to `psdAdd()` is a formula of the form `length~species`, where `length` is the observed length variable and `species` is the name of the species variable. In these data there is no variable that identified the species, likely because the data contains only one species. Thus, before `psdAdd()` can be used in this example, a new variable with the species name was added.^[`YperchSB1` was loaded again to start without the modifications performed previously.]
+`psdAdd()` can be used to add a length categorization variable to a data.frame for **all** species in the data.frame for which the GH length categories exists.^[Here, however, it is being applied to a data.frame with only one species.] The main argument to `psdAdd()` is a formula of the form `length~species`, where `length` is the name of the observed length variable and `species` is the name of the species variable. In these data there is no variable that identified the species, likely because the data contains only one species. Thus, before `psdAdd()` can be used in this example, a new variable with the species name was added.^[`YperchSB1` was loaded again to start without the modifications performed previously.]
 
 ```{r}
 data(YPerchSB1,package="FSAdata")
 YPerchSB1 <- YPerchSB1 |>
-  mutate(species="Yellow Perch",
-         ghcats1=psdAdd(tl~species,units="cm"))
+  mutate(spec="Yellow Perch",
+         ghcats1=psdAdd(tl~spec,units="cm"))
 peek(YPerchSB1,n=10)
 ```
 
-`psdAdd()` requires that the species variable have the species names in the spelling and capitalization used by `PSDlit`. So, for example, suppose that the `YPerchSB1` species names used the abbreviation `yep` rather than `Yellow Perch`.^[Note that `YPerchSB1` is loaded again to start over and the new abbreviation is added for this example.] A named list or vector can be given to `thesaurus=` that defines how the original species names (i.e., the values in the vector) relate to the species names required by `PSDlit` (i.e., the names in the vector). `psdAdd()` will match the two names appropriately while creating the GH length categories.
+`psdAdd()` requires that the species variable have the species names in the spelling and capitalization used by `PSDlit`. So, for example, suppose that the `YPerchSB1` species names used the abbreviation `yep` rather than `Yellow Perch`.^[Note that `YPerchSB1` is loaded again to start over and the new abbreviation is added for this example.] A named list or vector can be given to `thesaurus=` that defines how the original species names (i.e., the items to the right of the `=` in the vector) relate to the species names required by `PSDlit` (i.e., the names to the left of the `=` in the vector). `psdAdd()` will match the two names appropriately while creating the GH length categories.
 
 ```{r}
 data(YPerchSB1,package="FSAdata")
 YPerchSB1 <- YPerchSB1 |>
-  mutate(species="yep",
-         ghcats1=psdAdd(tl~species,units="cm",thesaurus=c("Yellow Perch"="yep")))
+  mutate(spec="yep",
+         ghcats1=psdAdd(tl~spec,units="cm",thesaurus=c("Yellow Perch"="yep")))
 peek(YPerchSB1,n=10)
 ```
 
 # Add Length Categories for Multiple Species
-The real value of `psdAdd()` is that it can be used to efficiently add length categories for multiple species in a single data.frame. This is illustrated below with examples for a variety of scenarios.
+The real value of `psdAdd()` is that it can be used to efficiently add length categories for multiple species in a single data.frame. This is illustrated below for a variety of scenarios.
 
 ## "Good" Names and No Groups
-`InchLake2` distributed with `FSAdata` contains lengths for several species captured from Inch Lake. These data provide a simple example for using `psdAdd()` because all species names are spelled as required and none of the species have sub-groups.^[See the next section for how to deal with these issues.] Note that lengths are in **inches** here.
+`InchLake2` distributed with `FSAdata` contains lengths for several species captured from Inch Lake. These data provide a simple example for using `psdAdd()` because all species names are spelled and capitalized as required (i.e., same as in `PSDlit1) and none of the species have sub-groups.^[See the next section for how to deal with these issues.] Note that lengths are in **inches** here.
 
 ```{r}
-data("InchLake2",package="FSAdata")
+data("InchLake2",package="FSAdata")  # retrieve the data.frame
 peek(InchLake2,n=10)
 ```
 
-`psdAdd()` can be used as described previously (i.e., with a formula of the form `length~species` and `units=`) to add GH length categories for all species in the data.frame for which GH length categories exist in `PSDlit`. A message will be issued identifying the species in the data.frame for which GH length categories do not exist. The new variable will be `<NA>` for those species.
+`psdAdd()` can be used as described previously (i.e., with a formula of the form `length~species` and `units=`) to add GH length categories for all species in the data.frame for which GH length categories exist in `PSDlit`. A message will be issued identifying the species in the data.frame for which GH length categories do not exist. The new variable will show `<NA>` for those species.
 
 ```{r}
 InchLake2 <- InchLake2 |>
@@ -186,17 +186,17 @@ InchLake2 <- InchLake2 |>
 peek(InchLake2,n=10)
 ```
 
-Additional non-GH length categories can be used with `psdAdd()` through `addLens()` similar to what was described for `psdVal()`. However, a named list must be given to `addLens()` that has named vectors for each species for what additional lengths are added. An example for this is given in [the documentation](https://fishr-core-team.github.io/FSA/reference/psdAdd.html) for `psdAdd()`.
+Additional non-GH length categories can be used with `psdAdd()` through `addLens()` similar to what was described for `psdVal()`. However, a named list must be given to `addLens()` that has named vectors for each species for the additional lengths to be added. An example for this is given in [the documentation](https://fishr-core-team.github.io/FSA/reference/psdAdd.html) for `psdAdd()`.
 
 ## "Bad" Names and No Groups
 Now consider the `Herman` data.frame (distributed with the `FSAdata` package) that has the lengths (cm) of four species -- Walleye, Yellow Perch, Black Crappie, and Black Bullhead --  from Lake Herman, SD. These four species do not have sub-groups defined in `PSDlit`. However, observing the data below^[And [the documentation](https://fishr-core-team.github.io/FSAdata/reference/Herman.html).] shows that the species variable (`spec`) contains codes for the species names rather than the names required by `PSDlit`.
 
 ```{r}
-data(Herman,package="FSAdata")
+data(Herman,package="FSAdata")  # retrieve the data.frame
 peek(Herman,n=10)
 ```
 
-One way to deal with the issue of "bad" species names is to use a named list or vector that defines how the names from `PSDlit` should be matched to the names in the data.frame. For this purpose, the species names in `PSDlit` are the names in the vector (i.e., before the `=`) and the species names in the data.frame are the values in the vector (i.e., after the `=`).
+One way to deal with the issue of "bad" species names is to use a named list or vector that defines how the names from `PSDlit` should be matched to the names in the data.frame. As before, the species names in `PSDlit` are the names in the vector (i.e., before the `=`) and the species names in the data.frame are the items in the vector (i.e., after the `=`).
 
 ```{r}
 thes <- c("Walleye"="wae","Yellow Perch"="yep",
@@ -227,7 +227,7 @@ peek(PSDWRtest,n=20)
   - Brook Trout were sampled from a lotic ("Trout Lake") system, for which there are sub-groups for GH length categories.
   - Brown Trout were sampled from a lotic ("Trout Lake") and lentic ("Brush Creek") system, for which there are sub-groups for GH length categories.
 
-The easiest way to deal with all of these "issues" is to create a new "species" variable (i.e., `species2` below) that appends the specific groups in parentheses to the species name. There are a variety of ways to do this and which way (is best or works) may depend on the specifics of the situation. Here, we primarily use `case_when()` from `dplyr` with a series of statements that begin with a "condition" to the left of the `~` and a new species "name" for that condition to the right of the `~`. The `.default=species` at the end will put the name from `species` into `species2` for all situations where none of the conditions above it are met (e.g., if `species` is "Yellow Perch" then `species2` will be "Yellow Perch").
+The easiest way to deal with all of these "issues" is to create a new "species" variable (i.e., `species2` below) that appends the specific groups in parentheses to the species name. There are a variety of ways to do this and which way (is best or works) may depend on the specifics of the situation. Here, `case_when()` from `dplyr` is used with a series of statements that begin with a "condition" to the left of the `~` and a new species "name" for that condition to the right of the `~`. The `.default=species` at the end will put the name from `species` into `species2` for all situations where none of the conditions above it are met (e.g., if `species` is "Yellow Perch" then `species2` will be "Yellow Perch").
 
 ```{r}
 PSDWRtest <- PSDWRtest |>
@@ -280,7 +280,7 @@ The PSD X-Y (i.e., incremental PSD) values are computed by dividing each value i
 
 Thus, for example, `r round(tmp[["stock"]])`\% of fish that reached stock-size were between stock- and quality-sized (i.e,. "PSD S-Q").
 
-The PSD-X (i.e., traditional PSD) values are computed by the reverse cumulative sum (i.e., accumulating from right-to-left) on the `prop.table()` results (and dropping the results for the stock-sized fish which will always by 1).
+The PSD-X (i.e., traditional PSD) values are computed by the reverse cumulative sum (i.e., accumulating from right-to-left) on the `prop.table()` results (and dropping the results for the stock-sized fish which will always be 100).
 
 ```{r}
 ( tmp <- rcumsum(tmp)[-1] )
@@ -309,17 +309,13 @@ By default, PSD metrics that are 0 are dropped from the results. They can be inc
 psdCalc(~tl,data=YPerchSB1,species="Yellow Perch",units="cm",drop0Est=FALSE)
 ```
 
-The PSD-X (in contrast to PSD X-Y) values are referred to here as "traditional" PSD metrics as they show the percent of stock-sized fish that were also X-sized. For example, PSD-P is the percent of stock-sized fish that also reached preferred-size. In this example, `r ypres["PSD-P","Estimate"]`\% (95%CI: `r ypres["PSD-P","95% LCI"]`\%-`r ypres["PSD-P","95% UCI"]`\%) of stock-sized fish attained preferred size.
-
-Just the "traditional" metrics may be returned by including `what="traditional"`.
+The PSD-X (in contrast to PSD X-Y) values are referred to here as "traditional" PSD metrics as they show the percent of stock-sized fish that were also X-sized. For example, PSD-P is the percent of stock-sized fish that also reached preferred-size. In this example, `r ypres["PSD-P","Estimate"]`\% (95%CI: `r ypres["PSD-P","95% LCI"]`\%-`r ypres["PSD-P","95% UCI"]`\%) of stock-sized fish attained preferred size. Just the "traditional" metrics may be returned by including `what="traditional"`.
 
 ```{r}
 psdCalc(~tl,data=YPerchSB1,species="Yellow Perch",units="cm",what="traditional")
 ```
 
-The PSD X-Y values are referred to here as "incremental" PSD metrics as they show the percent of stock-sized fish that were between X- and Y-sized. For example, PSD Q-P is the percent of stock-sized fish that reached quality-size but had not reach preferred-size. In this example, `r ypres["PSD Q-P","Estimate"]`\% (95%CI: `r ypres["PSD Q-P","95% LCI"]`\%-`r ypres["PSD Q-P","95% UCI"]`\%) of stock-sized fish attained quality but not preferred size.
-
-Just the "incremental" metrics may be returned by including `what="incremental"`.
+The PSD X-Y values are referred to here as "incremental" PSD metrics as they show the percent of stock-sized fish that were between X- and Y-sized. For example, PSD Q-P is the percent of stock-sized fish that reached quality-size but had not reach preferred-size. In this example, `r ypres["PSD Q-P","Estimate"]`\% (95%CI: `r ypres["PSD Q-P","95% LCI"]`\%-`r ypres["PSD Q-P","95% UCI"]`\%) of stock-sized fish attained quality but not preferred size. Just the "incremental" metrics may be returned by including `what="incremental"`.
 
 ```{r}
 psdCalc(~tl,data=YPerchSB1,species="Yellow Perch",units="cm",what="incremental")
@@ -342,7 +338,7 @@ psdCalc(~tl,data=YPerchSB1,species="Yellow Perch",units="cm",
 ```
 
 ## For Multiple Species from Length Category Variable
-PSD-X and PSD X-Y summaries for multiple species requires more work as will be demonstrated below with the `InchLake2` data.frame from previous.
+PSD-X and PSD X-Y summaries for multiple species requires more work as will be demonstrated below with the `InchLake2` data.frame from previous. Note here that `psdAdd()` is used to add the GH length categories in `ghcats1`.
 
 ```{r}
 data("InchLake2",package="FSAdata")
@@ -359,7 +355,7 @@ Inch_mod <- InchLake2 |>
   droplevels()
 ```
 
-Incremental PSD metrics (i.e, PSD X-Y) are then computed with `xtabs()` and `prop.table()`, similar to before except that `margin=` must be used in `prop.table()` so that the proportions are computed from the row totals.
+Incremental PSD metrics (i.e, PSD X-Y) are then computed with `xtabs()` and `prop.table()`, similar to before except that `margin=1` must be used in `prop.table()` so that the proportions are computed from the row totals.
 
 ```{r}
 ( freq <- xtabs(~species+ghcats1,data=Inch_mod) )
@@ -367,7 +363,7 @@ iPSDs <- prop.table(freq,margin=1)*100
 round(iPSDs,1)
 ```
 
-Traditional PSD metrics (i.e., PSD-X) are found by `apply()`ing `rcumsum()`^[This finds reverse cumulative sums; i.e., sums from end-to-start, rather than start-to-end.] to each row (i.e., `MARGIN=1`) of the PSD X-Y values. The result from `apply()` will be oriented opposite of what is desired (i.e., species in columns rather than rows), so it should be `t()`ransposed.
+Traditional PSD metrics (i.e., PSD-X) are found by `apply()`ing `rcumsum()`^[This finds reverse cumulative sums; i.e., sums from end-to-start, rather than start-to-end.] to each row (i.e., `MARGIN=1`) of the PSD X-Y values. The result from `apply()` will be oriented opposite of what is desired (i.e., species in columns rather than rows), so it should be transposed with `t()`.
 
 ```{r}
 tPSDs <- t(apply(iPSDs,MARGIN=1,FUN=rcumsum))
