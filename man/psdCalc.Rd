@@ -74,48 +74,49 @@ See examples and \href{https://fishr-core-team.github.io/FSA/articles/Computing_
 }
 
 \examples{
-#===== Random length data for Yellow Perch (for example) to the nearest mm
-set.seed(633437)
-yepdf <- data.frame(yepmm=round(c(rnorm(100,mean=125,sd=15),
-                                  rnorm(50,mean=200,sd=25),
-                                  rnorm(20,mean=270,sd=40)),0),
-                    species=rep("Yellow Perch",170))
-                    
 #===== Simple (typical) uses with just Gabelhouse lengths
+tmp <- subset(PSDWRtest,species=="Yellow Perch",select=c("species","len"))
+
 #----- All results
-psdCalc(~yepmm,data=yepdf,species="Yellow Perch")
+psdCalc(~len,data=tmp,species="Yellow Perch")
 
 #----- Just the traditional indices
-psdCalc(~yepmm,data=yepdf,species="Yellow Perch",what="traditional")
+psdCalc(~len,data=tmp,species="Yellow Perch",what="traditional")
 
 #----- Just the incremental indices
-psdCalc(~yepmm,data=yepdf,species="Yellow Perch",what="incremental")
+psdCalc(~len,data=tmp,species="Yellow Perch",what="incremental")
 
 #===== Add a custom length of interest (to the Gabelhouse lengths)
-psdCalc(~yepmm,data=yepdf,species="Yellow Perch",addLens=150)
+psdCalc(~len,data=tmp,species="Yellow Perch",addLens=150)
 
 #----- Additional lengths can be named
-psdCalc(~yepmm,data=yepdf,species="Yellow Perch",addLens=c("minLen"=150))
-psdCalc(~yepmm,data=yepdf,species="Yellow Perch",
+psdCalc(~len,data=tmp,species="Yellow Perch",addLens=c("minLen"=150))
+psdCalc(~len,data=tmp,species="Yellow Perch",
         addLens=c("minLen"=150,"maxslot"=275))
 
 #----- Can return just those results that include the additional lengths
-psdCalc(~yepmm,data=yepdf,species="Yellow Perch",
+psdCalc(~len,data=tmp,species="Yellow Perch",
         addLens=c("minSlot"=150,"maxSlot"=275),justAdds=TRUE)
-psdCalc(~yepmm,data=yepdf,species="Yellow Perch",
+psdCalc(~len,data=tmp,species="Yellow Perch",
         addLens=c("minSlot"=150,"maxSlot"=275),justAdds=TRUE,what="traditional")
 
 #===== Can show intermediate values (num in category and in stock)
-psdCalc(~yepmm,data=yepdf,species="Yellow Perch",showInterm=TRUE)
+psdCalc(~len,data=tmp,species="Yellow Perch",showInterm=TRUE)
 
-#===== Some species require use of group (e.g., treat these as if Brown Trout)
-psdCalc(~yepmm,data=yepdf,species="Brown Trout",group="lotic")
-psdCalc(~yepmm,data=yepdf,species="Brown Trout",group="lentic")
+#===== Some species require use of group
+tmp <- subset(PSDWRtest,species=="Brown Trout" & location=="Trout Lake",
+              select=c("species","location","len"))
+peek(tmp,n=6)
+
+# will err because Brown Trout has sub-groups in PSDlit
+# psdCalc(~len,data=tmp,species="Brown Trout")
+psdCalc(~len,data=tmp,species="Brown Trout",group="lotic")
+psdCalc(~len,data=tmp,species="Brown Trout (lotic)")
 
 #===== For species not in PSDlit ... don't include species and use addLens
-#      Note that these are same data as above, but treated as different species
-psdCalc(~yepmm,data=yepdf,addLens=c("stock"=130,"quality"=200,"preferred"=250,
-                                    "memorable"=300,"trophy"=380))
+#      Note these are same data as above, but treated as species not in PSDlit
+psdCalc(~len,data=tmp,addLens=c("stock"=130,"quality"=200,"preferred"=250,
+                                "memorable"=300,"trophy"=380))
                                     
 }
 \references{

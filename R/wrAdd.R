@@ -6,6 +6,10 @@
 #' 
 #' The species names in \code{species} must match the spelling and capitalization of \code{species} in \code{\link{WSlit}}. Use \code{wsVal()} to see a list of all species for which standard weight equations exist in \code{\link{WSlit}} and, more importantly, how the species names are spelled and capitalized.
 #' 
+#' The \code{thesaurus} argument may be used to relate alternate species names to the species names used in \code{WSlit}. For example, you (or your data) may use \dQuote{Bluegill Sunfish}, but \dQuote{Bluegill} is used in \code{WSlit}. The alternate species name can be used here if it is defined in a named vector (or list) given to \code{thesarus=}. The alternate species name is the value and the species name in \code{PSDlit} is the name in this vector/list - e.g., \code{c("Bluegill"="Bluegill Sunfish")}. See the examples for a demonstration.
+#' 
+#' Some species have length categories separated by sub-group. For example, length categories exist for both lentic and lotic populations of Brown Trout. The length values for a sub-group may be obtained by either including the species name in \code{species} and the sub-group name in \code{group} in \code{WsOpts} or by using the combined species and sub-group name, with the sub-group name in parentheses, in \code{species}. Both methods are demonstrated in the examples. Note that an error is returned if a species has sub-groups but neither method is used to define the sub-group.
+#' 
 #' Some (few) species have more than one equation listed in \code{\link{WSlit}} (for the specified units). In these instances the user must select one of the equations to use with \code{WsOpts}. \code{WsOpts} is a list of lists where the inside list contains one or more of \code{group}, \code{ref}, or \code{method} (see \code{\link{WSlit}}) required to specify a single equation for a particular species, which is the name of the inner list. See the examples for an illustration of how to use \code{WsOpts}.
 #' 
 #' See examples and \href{https://fishr-core-team.github.io/FSA/articles/Computing_Relative_Weights.html}{this article} for a demonstration.
@@ -14,6 +18,7 @@
 #' @param len A numeric vector that contains length measurements. Not used if \code{wt} is a formula.
 #' @param spec A character or factor vector that contains the species names. Not used if \code{wt} is a formula.
 #' @param data A data.frame that minimally contains variables of the the observed lengths, observed weights, and the species names given in the \code{formula=}.
+#' @param thesaurus A named list for providing alternative species names (the values in the list) that correspond to specific names in \code{PSDlit} (the names in the list). See details and examples.
 #' @param units A string that indicates whether the weight and length data in \code{formula} are in \code{"metric"} (DEFAULT; mm and g) or \code{"English"} (in and lbs) units.
 #' @param WsOpts A named list that provides specific choices for \code{group}, \code{ref}, or \code{method} for species for which more than one standard weight equation exists in \code{\link{WSlit}}.
 #' @param \dots Not used.
@@ -31,51 +36,78 @@
 #' @keywords manip
 #'
 #' @examples
-#' #===== Create random data for three species
-#' #----- just to control the randomization
-#' set.seed(345234534)
-#' dbt <- data.frame(species=factor(rep(c("Bluefin Tuna"),30)),
-#'                   tl=round(rnorm(30,1900,300),0))
-#' dbt$wt <- round(4.5e-05*dbt$tl^2.8+rnorm(30,0,6000),1)
-#' dbg <- data.frame(species=factor(rep(c("Bluegill"),30)),
-#'                   tl=round(rnorm(30,130,50),0))
-#' dbg$wt <- round(4.23e-06*dbg$tl^3.316+rnorm(30,0,10),1)
-#' dlb <- data.frame(species=factor(rep(c("Largemouth Bass"),30)),
-#'                   tl=round(rnorm(30,350,60),0))
-#' dlb$wt <- round(2.96e-06*dlb$tl^3.273+rnorm(30,0,60),1)
-#' df <- rbind(dbt,dbg,dlb)
-#' str(df)
-#'
-#' #===== Add Wr variable
-#' #----- using formula interface
-#' df$Wr1 <- wrAdd(wt~tl+species,data=df)
+#' #===== Simple example with 3 species, 2 in WSlit ... nothing unusual
+#' tmp <- subset(PSDWRtest,
+#'               species %in% c("Yellow Perch","Iowa Darter","Largemouth Bass"),
+#'               select=c("species","len","wt"))
+#' peek(tmp,n=10)
 #' 
+#' #----- Add Wr variable ... using formula interface
+#' tmp$wr1 <- wrAdd(wt~len+species,data=tmp)
 #' #----- same but with non-formula interface
-#' df$Wr2 <- wrAdd(df$wt,df$tl,df$species)
-#' 
+#' tmp$wr2 <- wrAdd(tmp$wt,tmp$len,tmp$species)
 #' #----- same but using dplyr
 #' if (require(dplyr)) {
-#'   df <- df %>%
-#'     mutate(Wr3=wrAdd(wt,tl,species))
+#'   tmp <- tmp %>%
+#'     mutate(wr3=wrAdd(wt,len,species))
 #' }
-#' 
 #' #----- examine results
-#' peek(df,n=10)
-#'  
-#' #===== Example with only one species in the data.frame
-#' bg <- droplevels(subset(df,species=="Bluegill"))
-#' bg$Wr4 <- wrAdd(wt~tl+species,data=bg)
-#' bg
+#' peek(tmp,n=10)
 #' 
-#' #===== Example with a species that has Ws eqns for multiple groups and a
-#' #      group needs to be specified with WsOpts
-#' wae <- data.frame(species=factor(rep(c("Walleye"),30)),
-#'                   tl=round(rnorm(30,500,200),0))
-#' wae$wt <- round(3.33e-06*wae$tl^3.16+rnorm(30,0,50),1)
-#' # wae$Wr <- wrAdd(wt~tl+species,data=wae) # will err b/c multiple groups
-#' wae$Wr <- wrAdd(wt~tl+species,data=wae,
-#'                 WsOpts=list(Walleye=list(group="overall")))
-#' peek(wae,n=10)
+#' #===== Simple example with only one species in the data.frame
+#' tmp <- subset(PSDWRtest,species %in% c("Yellow Perch"),
+#'               select=c("species","len","wt"))
+#' tmp$wr <- wrAdd(wt~len+species,data=tmp)
+#' peek(tmp,n=6)
+#' 
+#' #===== Example of species with sub-groups but only 1 sub-group in data.frame
+#' #-----   Group not in species name so must specify group with WsOpts
+#' tmp <- subset(PSDWRtest,species=="Brown Trout" & location=="Trout Lake",
+#'               select=c("species","len","wt"))
+#' tmp$wr1 <- wrAdd(wt~len+species,data=tmp,
+#'                  WsOpts=list("Brown Trout"=list("group"="lotic")))
+#' 
+#' #-----   Group in species name so don't specify group with WsOpts
+#' tmp$species2 <- "Brown Trout (lotic)"
+#' tmp$wr2 <- wrAdd(wt~len+species2,data=tmp)  # note use of species2
+#' 
+#' peek(tmp,n=6)
+#' 
+#' #===== Example of species with sub-groups and 2 sub-groups in data.frame
+#' tmp <- subset(PSDWRtest,species=="Brown Trout",
+#'               select=c("species","location","len","wt"))
+#' #-----   Must create "species" with sub-groups in name
+#' #-----     Many ways to do this, this is just one example for this case
+#' tmp$species2 <- ifelse(tmp$location=="Trout Lake",
+#'                        "Brown Trout (lotic)","Brown Trout (lentic)")
+#' tmp$wr <- wrAdd(wt~len+species2,data=tmp)  # note use of species2
+#' peek(tmp,n=6)
+#' 
+#' #===== Example of a species name that needs the thesaurus
+#' tmp <- subset(PSDWRtest,species %in% c("Yellow Perch","Bluegill Sunfish"),
+#'               select=c("species","len","wt"))
+#' #-----  Below will not add wr for "Bluegill Sunfish" as not in WsLit ("Bluegill" is)
+#' tmp$wr1 <- wrAdd(wt~len+species,data=tmp)
+#' #-----  Use thesaurus to identify "Bluegill Sunfish" as "Blueill
+#' tmp$wr2 <- wrAdd(wt~len+species,data=tmp,thesaurus=c("Bluegill"="Bluegill Sunfish"))
+#' peek(tmp,n=10)
+#' 
+#' #===== Example of species that has Ws eqns for multiple reference values
+#' tmp <- subset(PSDWRtest,species=="Ruffe",select=c("species","len","wt"))
+#' #-----  Below will err as Ruffe has Ws eqns for multiple reference values
+#' # tmp$wr <- wrAdd(wt~len+species,data=tmp)
+#' #-----  Must choose which eqn to use with WsOpts
+#' tmp$wr <- wrAdd(wt~len+species,data=tmp,
+#'                 WsOpts=list(Ruffe=list(ref=75)))
+#' peek(tmp,n=6)
+#' 
+#' #===== Example with two uses of WsOpts (and one species without)
+#' tmp <- subset(PSDWRtest,species %in% c("Ruffe","Muskellunge","Iowa Darter"),
+#'               select=c("species","len","wt"))
+#' tmp$wr <- wrAdd(wt~len+species,data=tmp,
+#'                 WsOpts=list(Muskellunge=list(group="overall"),
+#'                             Ruffe=list(ref=75)))
+#' peek(tmp,n=10)
 #' 
 #' @rdname wrAdd
 #' @export
@@ -85,7 +117,7 @@ wrAdd <- function (wt,...) {
 
 #' @rdname wrAdd
 #' @export
-wrAdd.default <- function(wt,len,spec,
+wrAdd.default <- function(wt,len,spec,thesaurus=NULL,
                           units=c("metric","English"),WsOpts=NULL,...) {
   ###### Internal Function
   #===== Print error if no options given, but they are needed
@@ -94,7 +126,7 @@ wrAdd.default <- function(wt,len,spec,
     print(df[,c("species","group","ref","method")])
     #----- Error message for next two possible problems
     STOP("More than one Ws equation exists for ",iStrCollapse(unique(df$species)),
-         ". Please use a named list in 'opts=' to select one ",
+         ". Please use a named list in 'WsOpts=' to select one ",
          "equation for ",iStrCollapse(unique(df$species))," by specifing 'group', ",
          "'ref', or 'method' as appropriate. See details in documentation ",
          "and above (for reference).")
@@ -107,7 +139,7 @@ wrAdd.default <- function(wt,len,spec,
     #----- Reduce Wsdf to just for that species
     Wsdf <- droplevels(Wsdf[Wsdf$species==species,])
     #----- If >1 Ws eqn for species/units, then need user to further define
-    #      with opts, otherise one Ws eqn is returned
+    #      with opts, otherwise one Ws eqn is returned
     if (nrow(Wsdf)>1) {
       # ..... Need opts for species but none given (at all) so STOP
       if (is.null(WsOpts)) iErrOpts(Wsdf)
@@ -126,8 +158,8 @@ wrAdd.default <- function(wt,len,spec,
         Wsdf <- droplevels(Wsdf[Wsdf[[names(tmp)]]==tmp,])
         if (nrow(Wsdf)==0)
           STOP("Use of '",crit_opts[i],"=",tmp[[1]],"' for ",iStrCollapse(species),
-               " did not return a standard weight equation. Please reconsider your use ",
-               "of 'WsOpts=' to restrict to only one equation for ",
+               " did not return a standard weight equation. Please reconsider your ",
+               "use of 'WsOpts=' to restrict to only one equation for ",
                iStrCollapse(species),".")
         else if (nrow(Wsdf)>1) {
           #..... send error if not reduced to only one Ws equation
@@ -143,7 +175,6 @@ wrAdd.default <- function(wt,len,spec,
     #----- Return appropriate part of Wsdf (i.e., WSlit)
     Wsdf
   }
-  
   ###### END Internal Function
 
   ###### BEGIN Main Function
@@ -156,7 +187,7 @@ wrAdd.default <- function(wt,len,spec,
   
   #===== Prepare the Ws literature values data frame
   #----- load WSlit data frame into this functions environment
-  WSlit <- FSA::WSlit
+  WSlit <- iPrepWSlit(thesaurus)
   #----- isolate only those data for which those units exist
   WSlit <- droplevels(WSlit[WSlit$units==units,])
   
@@ -166,8 +197,8 @@ wrAdd.default <- function(wt,len,spec,
                      Wr=rep(NA,length(len)))
   #===== Initiate a blank new data frame with same columns as old data frame
   ndata <- data[-c(seq_len(nrow(data))),]  
-  #===== get list of species in data
-  specs <- unique(spec)
+  #===== get list of species in data ... change from factor to character if necessary
+  specs <- as.character(unique(spec))
   
   #===== cycle through each species where WS equations are known
   for (i in seq_along(specs)) {
@@ -199,7 +230,7 @@ wrAdd.default <- function(wt,len,spec,
 
 #' @rdname wrAdd
 #' @export
-wrAdd.formula <- function(wt,data,units=c("metric","English"),...) {
+wrAdd.formula <- function(wt,data,thesaurus=NULL,units=c("metric","English"),...) {
   #===== Perform some checks on the formula
   tmp <- iHndlFormula(wt,data,expNumR=1,expNumE=2,expNumENums=1,expNumEFacts=1)
   if (tmp$vnum!=3) STOP("'wt' must have one variable on the left-hand-side ",
@@ -215,5 +246,44 @@ wrAdd.formula <- function(wt,data,units=c("metric","English"),...) {
 
   #===== Call the wrAdd.default
   wrAdd.default(tmp$mf[,tmp$Rpos],tmp$mf[,tmp$ENumPos],
-                tmp$mf[,tmp$EFactPos],units,...)
+                tmp$mf[,tmp$EFactPos],thesaurus,units,...)
 }
+
+# ==============================================================================
+# Internal -- prepare WSlit by loading it and replacing its default names with
+#             names in the thesaurus, if any
+# ==============================================================================
+iPrepWSlit <- function(thesaurus) {
+  # Load WSlit into dat in this function namespace
+  dat <- FSA::WSlit
+  if (!is.null(thesaurus)) {
+    # Some sanity checks on thesaurus
+    if (!(is.vector(thesaurus) | is.list(thesaurus)))
+      STOP("'thesaurus' must be either a vector or list. ",
+           "Make sure it is not 'factor'ed.")
+    if (length(names(thesaurus))==0)
+      STOP("Values in 'thesaurus' must be named (with species names from 'WSlit'.)")
+    if (!is.character(thesaurus))
+      STOP("Values in 'thesaurus' must be strings of species names.")
+    # thesaurus appears to be a named vector/list of strings ... start processing
+    # Alphabetize names in thesaurus to match dat/WSlit
+    thesaurus <- thesaurus[order(names(thesaurus))]
+    # Remove name from thesaurus if not in dat/WSlit
+    thes.nokeep <- which(!names(thesaurus) %in% unique(dat$species))
+    if (length(thes.nokeep)>0) {
+      MESSAGE("The following species names were in 'thesaurus' but do ",
+              "not have an entry in 'WSlit' and will be ignored: ",
+              iStrCollapse(names(thesaurus)[thes.nokeep]),".")
+      thesaurus <- thesaurus[-thes.nokeep]      
+    }
+    # Find species in dat/PSDlit in kept thesaurus and change names to thesaurus names
+    if (length(thesaurus)>0) {
+      tmp <- match(dat$species,names(thesaurus))
+      thes.pos <- which(!is.na(tmp))
+      dat$species[thes.pos] <- unname(thesaurus[tmp[thes.pos]])
+    }
+  }
+  # Return dat/WSlit
+  dat
+}
+

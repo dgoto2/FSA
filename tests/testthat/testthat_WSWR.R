@@ -17,6 +17,12 @@ test_that("wsVal() messages",{
                "There is no \"Derek\" group for \"Walleye\"")
   expect_warning(wsVal("Bluegill",group="Derek"),
                "There are no groups for \"Bluegill\"; thus,")
+  #===== need groups, but trying group in parentheses with species
+  expect_error(wsVal("Walleye (junk)"),
+               "There is no Ws equation in \'WSlit\' for \"Walleye ")
+  expect_warning(wsVal("Walleye (overall)",group="junk"),
+                 "There are no groups for \"Walleye ")
+  expect_no_error(wsVal("Walleye (overall)"))
   
   #===== bad units
   #----- typed wrong
@@ -29,6 +35,8 @@ test_that("wsVal() messages",{
                "There is no Ws equation for \"Bluegill\" with a reference")
   expect_error(wsVal("Bluegill",ref=50),
                "There is no Ws equation for \"Bluegill\" with a reference")
+  expect_error(wsVal("Ruffe",ref=30),
+               "There is no Ws equation for \"Ruffe\" with a reference")
   #===== bad choices for method
   expect_error(wsVal("Bluegill",method="Derek"),
                "There is no Ws equation for \"Bluegill\" derived from")
@@ -43,67 +51,84 @@ test_that("wsVal() messages",{
 })
 
 test_that("wrAdd() messages",{
-  ## simulate data set
-  set.seed(345234534)
-  dbt <- data.frame(species=factor(rep(c("Bluefin Tuna"),30)),
-                    tl=round(rnorm(30,1900,300),0))
-  dbt$wt <- round(4.5e-05*dbt$tl^2.8+rnorm(30,0,6000),1)
-  dbg <- data.frame(species=factor(rep(c("Bluegill"),30)),
-                    tl=round(rnorm(30,130,50),0))
-  dbg$wt <- round(4.23e-06*dbg$tl^3.316+rnorm(30,0,10),1)
-  dlb <- data.frame(species=factor(rep(c("Largemouth Bass"),30)),
-                    tl=round(rnorm(30,350,60),0))
-  dlb$wt <- round(2.96e-06*dlb$tl^3.273+rnorm(30,0,60),1)
-  df <- rbind(dbt,dbg,dlb)
-  df$rnd <- runif(nrow(df))
-  df$junk <- sample(c("Derek","Hugh","Ogle"),nrow(df),replace=TRUE)
+  #===== Get data
+  #----- Species with no "issues" + random numeric variable
+  df1 <- subset(PSDWRtest,
+                species %in% c("Yellow Perch","Largemouth Bass","Iowa Darter"))
+  df1$rndn <- runif(nrow(df1))
+
+  #----- Species with some "issues"
+  df2 <- subset(PSDWRtest,
+                species %in% c("Bluegill Sunfish","Ruffe","Walleye","Iowa Darter"))
   
-  ## Simulate second data set
-  wae <- data.frame(species=factor(rep(c("Walleye"),30)),
-                    tl=round(rnorm(30,500,200),0))
-  wae$wt <- round(3.33e-06*wae$tl^3.16+rnorm(30,0,50),1)
+   
+  #===== bad units
+  expect_error(wrAdd(wt~len+species,df1,units="inches"),"should be one of")
   
-  ## bad units
-  expect_error(wrAdd(wt~tl+species,df,units="inches"),"should be one of")
+  #===== bad formulae
+  expect_error(wrAdd(~len,df1),"must have one variable on the left-hand-side")
+  expect_error(wrAdd(~len+species,df1),"must have one variable on the left-hand-side")
+  expect_error(wrAdd(~len+species+wt,df1),"must have a left-hand-side")
+  expect_error(wrAdd(wt~len,df1),"must have one variable on the left-hand-side")
+  expect_error(wrAdd(wt~species,df1),"must have one variable on the left-hand-side")
+  expect_error(wrAdd(wt~len+rndn,df1),"must have one and only one numeric variable")
+  expect_error(wrAdd(wt~species+location,df1),"must have one and only one numeric variable")
+  expect_error(wrAdd(wt~len+species+location,df1),"must have one variable on the left-hand-side")
+  expect_error(wrAdd(wt+len~species,df1),"does not work with more than one variable on the")
+  expect_error(wrAdd(wt~len+rndn+species,df1),"must have one variable on the left-hand-side")
   
-  ## bad formulae
-  expect_error(wrAdd(~tl,df),"one variable")
-  expect_error(wrAdd(~tl+species,df),"one variable")
-  expect_error(wrAdd(~tl+species+wt,df),"left-hand-side")
-  expect_error(wrAdd(wt~tl,df),"one variable")
-  expect_error(wrAdd(wt~species,df),"one variable")
-  expect_error(wrAdd(wt~tl+rnd,df),"only one numeric")
-  expect_error(wrAdd(wt~species+junk,df),"only one numeric")
-  expect_error(wrAdd(wt~tl+species+junk,df),"one variable")
-  expect_error(wrAdd(wt+tl~species,df),"more than one variable")
-  expect_error(wrAdd(wt~tl+rnd+species,df),"one variable")
+  #===== bad vector types
+  expect_error(wrAdd(species~wt+len,df1),"Variable on left-hand-side of \'wt\' is not numeric")
+  expect_error(wrAdd(df1$species,df1$wt,df1$len),"\'wt\' must be numeric")
+  expect_error(wrAdd(df1$wt,df1$species,df1$len),"\'len\' must be numeric")
+  expect_error(wrAdd(df1$wt,df1$len,df1$rndn),"\'spec\' must be character or factor")
   
-  ## bad vector types
-  expect_error(wrAdd(species~wt+tl,df),"not numeric")
-  expect_error(wrAdd(df$species,df$wt,df$tl),"numeric")
-  expect_error(wrAdd(df$wt,df$species,df$tl),"numeric")
-  expect_error(wrAdd(df$wt,df$tl,df$rnd),"factor")
-  
-  ## need to use WsOpts
-  expect_error(wrAdd(wt~tl+species,wae),
-               "More than one Ws equation exists for \"Walleye\"") %>%
-    expect_output("Walleye")
-  expect_error(wrAdd(wt~tl+species,wae,
+  #===== need to use WsOpts
+  expect_error(wrAdd(wt~len+species,df2),
+               "More than one Ws equation exists for \"Ruffe\"") %>%
+    expect_output("Ruffe")
+  expect_error(wrAdd(wt~len+species,df2,
                      WsOpts=list(Bluegill=list(group="overall"))),
+               "More than one Ws equation exists for \"Ruffe\"") %>%
+    expect_output("Ruffe")
+  expect_error(wrAdd(wt~len+species,df2,
+                     WsOpts=list(Ruffe=list(ref=50))),
                "More than one Ws equation exists for \"Walleye\"") %>%
     expect_output("Walleye")
-  expect_error(wrAdd(wt~tl+species,wae,
-                     WsOpts=list(Walleye=list(ref=50))),
+  expect_error(wrAdd(wt~len+species,df2,
+                     WsOpts=list(Ruffe=list(ref=50),
+                                 Walleye=list(ref=50))),
                "Use of 'ref=50' for \"Walleye\" did not return")
-  expect_error(wrAdd(wt~tl+species,wae,
-                     WsOpts=list(Walleye=list(junk=50))),
+  expect_error(wrAdd(wt~len+species,df2,
+                     WsOpts=list(Ruffe=list(junk=50))),
                "'junk' in 'WsOpts=' must be one of")
+  expect_no_error(wrAdd(wt~len+species,data=df2,
+                        WsOpts=list(Walleye=list(group="overall"),
+                                    Ruffe=list(ref=75))))
+  
+  #===== bad thesaurus
+  expect_error(wrAdd(wt~len+species,df2,thesaurus=c("Bluegill"),
+                     WsOpts=list(Walleye=list(group="overall"),
+                                 Ruffe=list(ref=75))),
+               "Values in \'thesaurus\' must be named")
+  expect_error(wrAdd(wt~len+species,df2,thesaurus=c("Bluegill"=7),
+                     WsOpts=list(Walleye=list(group="overall"),
+                                 Ruffe=list(ref=75))),
+               "Values in \'thesaurus\' must be strings of species names")
+  expect_error(wrAdd(wt~len+species,df2,thesaurus=factor(c("Bluegill"="Bluegill Sunfish")),
+                     WsOpts=list(Walleye=list(group="overall"),
+                                 Ruffe=list(ref=75))),
+               "\'thesaurus\' must be either a vector or list")
+  tmp <- wrAdd(wt~len+species,df2,thesaurus=c("bluegill"="Bluegill Sunfish"),
+               WsOpts=list(Walleye=list(group="overall"),
+                           Ruffe=list(ref=75))) %>%
+    expect_message("The following species names were in \'thesaurus\' but do not") 
 })
 
 
 ## Test Output Types ----
 test_that("wsVal() results",{
-  ## Do Bluegill results match ... example with no group or quad
+  #===== Do Bluegill results match ... example with no group or quad
   bg1 <- wsVal("Bluegill")
   bg2 <- WSlit[WSlit$species=="Bluegill" & WSlit$units=="metric",]
   bg2 <- bg2[,!names(bg2) %in% c("group","max.len","quad","comment")]
@@ -116,7 +141,7 @@ test_that("wsVal() results",{
   bg2 <- WSlit[WSlit$species=="Bluegill" & WSlit$units=="English",]
   bg2 <- bg2[,names(bg2) %in% c("species","min.len","int","slope")]
   expect_equal(bg1,bg2,ignore_attr=TRUE)
-  ## Do Ruffe results match ... example with quad
+  #===== Do Ruffe results match ... example with quad
   ruf1 <- wsVal("Ruffe",ref=75)
   ruf2 <- WSlit[WSlit$species=="Ruffe" & WSlit$units=="metric" & WSlit$ref=="75",]
   ruf2 <- ruf2[!names(ruf2) %in% c("group","comment")]
@@ -125,7 +150,7 @@ test_that("wsVal() results",{
   ruf2 <- WSlit[WSlit$species=="Ruffe" & WSlit$units=="metric" & WSlit$ref=="75",]
   ruf2 <- ruf2[,names(ruf2) %in% c("species","min.len","max.len","int","slope","quad")]
   expect_equal(ruf1,ruf2,ignore_attr=TRUE)
-  ## Do Walleye results match ... example with a sub-group
+  #===== Do Walleye results match ... example with a sub-group
   wae1 <- wsVal("Walleye",group="overall")
   wae2 <- WSlit[WSlit$species=="Walleye" & WSlit$group=="overall" & WSlit$units=="metric",]
   wae2 <- wae2[,!names(wae2) %in% c("max.len","quad","comment")]
@@ -138,19 +163,38 @@ test_that("wsVal() results",{
   wae2 <- WSlit[WSlit$species=="Walleye" & WSlit$group=="overall" & WSlit$units=="metric",]
   wae2 <- wae2[,names(wae2) %in% c("species","min.len","int","slope")]
   expect_equal(wae1,wae2,ignore_attr=TRUE)
+  #===== Do Walleye results match ... example with a sub-group in the species name
+  wae1 <- wsVal("Walleye (overall)")
+  wae2 <- WSlit[WSlit$species=="Walleye (overall)" & WSlit$units=="metric",]
+  wae2 <- wae2[,!names(wae2) %in% c("group","max.len","quad","comment")]
+  expect_equal(wae1,wae2,ignore_attr=TRUE)
+  wae1 <- wsVal("Walleye (overall)",units="English")
+  wae2 <- WSlit[WSlit$species=="Walleye (overall)" & WSlit$units=="English",]
+  wae2 <- wae2[,!names(wae2) %in% c("group","max.len","quad","comment")]
+  expect_equal(wae1,wae2,ignore_attr=TRUE)
+  wae1 <- wsVal("Walleye (overall)",simplify=TRUE)
+  wae2 <- WSlit[WSlit$species=="Walleye (overall)" & WSlit$units=="metric",]
+  wae2 <- wae2[,names(wae2) %in% c("species","min.len","int","slope")]
+  expect_equal(wae1,wae2,ignore_attr=TRUE)
   
-  ##
+  #===== Check list output
   expect_message(capture.output(wsVal("List")),"must be one of following")
   expect_output(suppressMessages(wsVal("List")))
 })
 
 
 ## Validate Results ----
-test_that("wrAdd() matches values computed in Excel.",{
+test_that("wrAdd() matches values computed 'by hand' in Excel.",{
   # Read in external CSV file
-  ftmp <- system.file("extdata","PSDWR_testdata.csv",package="FSA")
-  df <- read.csv(ftmp)
-
-  df$wr <- wrAdd(wt~tl+species,data=df)
-  expect_equal(df$wr,df$WR)
+  ftmp <- system.file("extdata","PSDWR_data4testthat.csv",package="FSA")
+  tmp <- read.csv(ftmp)
+  # Create a thesaurus for a couple of species
+  thes <- c("Bluegill"="Bluegill Sunfish",
+            "Lake Trout"="Lean Lake Trout")
+  # Add wr variable as calculated in FSA
+  tmp$wr2 <- wrAdd(wt~len+species2,data=tmp,
+                   thesaurus=thes,
+                   WsOpts=list(Ruffe=list(ref=75)))
+  # Compare  
+  expect_equal(tmp$wr,tmp$wr2)
 })

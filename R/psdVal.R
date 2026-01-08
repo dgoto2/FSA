@@ -9,9 +9,12 @@
 #' @param addLens A numeric vector that contains minimum length definitions for additional categories. See details.
 #' @param addNames A string vector that contains names for the additional length categories added with \code{addLens}. See details.
 #' @param showJustSource A logical that indicates whether just the literature source information should be returned (\code{TRUE}) or not. If \code{TRUE} this will NOT return any of the Gabelhouse length information.
+#' @param dat Data.frame of Gabelhouse length categories for all species. Defaults to `PSDlit` and is generally not used by the user (this simplifies use of this function in \code{psdAdd}).
 #'
 #' @details Finds the Gabelhouse lengths from \code{data(PSDlit)} for the species given in \code{species}. The species name must be spelled exactly (including capitalization) as it appears in \code{data(PSDlit)}. Type \code{psdVal()} to see the list of species and how they are spelled.
 #'
+#' Some species have length categories separated by sub-group. For example, length categories exist for both lentic and lotic populations of Brown Trout. The length values for a sub-group may be obtained by either including the species name in \code{species} and the sub-group name in \code{group} or by using the combined species and sub-group name, with the sub-group name in parentheses, in \code{species}. Both methods are demonstrated in the examples. Note that an error is returned if a species has sub-groups but neither method is used to define the sub-group.#' 
+#' 
 #' A zero is included in the first position of the returned vector if \code{incl.zero=TRUE}. This is useful when computing PSD values with a data.frame that contains fish smaller than the stock length.
 #'
 #' Additional lengths may be added to the returned vector with \code{addLens}. Names for these lengths can be included as names in \code{addLens} or separately in \code{addNames}. If \code{addNames} is NULL and \code{addLens} is not named then the default category names will be the lengths from \code{addLens}. The \code{addLens} argument is useful for calculating PSD values that are different from the Gabelhouse lengths.
@@ -47,10 +50,15 @@
 #' psdVal("Bluegill",showJustSource=TRUE)
 #' 
 #' #===== For species that have sub-groups
+#' #-----   using group= argument
 #' psdVal("Brown Trout",group="lentic")
 #' psdVal("Brown Trout",group="lotic")
-#' psdVal("Palmetto Bass",group="revised")
-#' psdVal("Palmetto Bass",group="original")
+#' #-----   group combined in species name, so no group= use
+#' psdVal("Brown Trout (lentic)")
+#' 
+#' #===== For species with revised values
+#' psdVal("Palmetto Bass")
+#' psdVal("Palmetto Bass (original)")
 #' 
 #' #===== Adding user-defined categories
 #' #-----   with lengths and names separately in addLens= and addNames=
@@ -60,28 +68,29 @@
 #' #-----   with a named vector in addLens=
 #' psdVal("Bluegill",units="in",addLens=c("MinLen"=7))
 #' psdVal("Bluegill",units="in",addLens=c("MinSlot"=7,"MaxSlot"=9))
-#'
+#' 
 #' @export psdVal
 psdVal <- function(species="List",group=NULL,units=c("mm","cm","in"),
                    addLens=NULL,addNames=NULL,
-                   incl.zero=TRUE,showJustSource=FALSE) {
+                   incl.zero=TRUE,showJustSource=FALSE,dat=NULL) {
   units <- match.arg(units)
-  #====== Load PSDlit into this function's environment, do some checking, and
-  #       return a data.frame with infor for just that species/group
-  PSDlit <- FSA::PSDlit
-  PSDlit <- iPSDGetSpecies(PSDlit,species,group)
+
+  #====== If dat is null then load PSDlit into dat ... then do some checking,
+  #       and return a data.frame with info for just that species/group
+  if (is.null(dat)) dat <- FSA::PSDlit
+  dat <- iPSDGetSpecies(dat,species,group)
   
-  #====== Prepare Result as longs as PSDlit was not returned as NULL
-  if (!is.null(PSDlit)) {
+  #====== Prepare Result as longs as dat was not returned as NULL
+  if (!is.null(dat)) {
     if (showJustSource) {
       ifelse(is.null(group),cols <- c(1,14),cols <- c(1,2,15))
-      PSDlit[,cols]
+      dat[,cols]
     } else {
       #----- Identify columns based on units
       ifelse(units=="in",cols <- 3:8,cols <- 9:14)
       if (is.null(group)) cols <- cols-1
       #----- get the length categories
-      PSDvec <- as.matrix(PSDlit[,cols])[1,]
+      PSDvec <- as.matrix(dat[,cols])[1,]
       names(PSDvec) <- gsub("\\..*","",names(PSDvec))
       #----- remove zero category (substock) if asked
       if (!incl.zero) PSDvec <- PSDvec[!names(PSDvec)=="substock"]
@@ -108,7 +117,6 @@ psdVal <- function(species="List",group=NULL,units=c("mm","cm","in"),
     }
   }
 }
-
 
 # ==============================================================================
 # Internal -- check species name against the 'dat' data.frame (usually PSDLit)

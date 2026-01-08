@@ -6,6 +6,7 @@
 #' @param species A character or factor vector that contains the species names. Ignored if \code{len} is a formula.
 #' @param group A named list that provides specific choices for \code{group} for species for which more than one set of Gabelhouse lengths exists in \code{\link{PSDlit}}.
 #' @param data A data.frame that minimally contains the length measurements and species names if \code{len} is a formula.
+#' @param thesaurus A named list for providing alternative species names (the values in the list) that correspond to specific names in \code{PSDlit} (the names in the list). See details and examples.
 #' @param units A string that indicates the type of units used for the lengths. Choices are \code{mm} for millimeters (DEFAULT), \code{cm} for centimeters, and \code{in} for inches.
 #' @param use.names A logical that indicates whether the vector returned is numeric (\code{=FALSE}) or string (\code{=TRUE}; default) representations of the Gabelhouse lengths. See details.
 #' @param as.fact A logical that indicates that the new variable should be returned as a factor (\code{=TRUE}) or not (\code{=FALSE}). Defaults to same as \code{use.names} unless \code{addLens} is not \code{NULL}, in which case it will default to \code{FALSE}. See details.
@@ -15,7 +16,9 @@
 #'
 #' @details This computes a vector that contains the Gabelhouse lengths specific to each species for all individuals in an entire data frame. The vector can be appended to an existing data.frame to create a variable that contains the Gabelhouse lengths for each individual. The Gabelhouse length value will be \code{NA} for each individual for which Gabelhouse length definitions do not exist in \code{\link{PSDlit}}. Species names in the data.frame must be the same as those used in \code{\link{PSDlit}} (i.e., same spelling and capitalization; use \code{psdVal()} to see the list of species).
 #' 
-#' Some species have Gabelhouse lengths for sub-groups (e.g., \dQuote{lentic} vs \dQuote{lotic}). For these species, choose which sub-group to use with \code{group}.
+#' The \code{thesaurus} argument may be used to relate alternate species names to the species names used in \code{PSDlit}. For example, you (or your data) may use \dQuote{Bluegill Sunfish}, but \dQuote{Bluegill} is used in \code{PSDlit}. The alternate species name can be used here if it is defined in a named vector (or list) given to \code{thesarus=}. The alternate species name is the value and the species name in \code{PSDlit} is the name in this vector/list - e.g., \code{c("Bluegill"="Bluegill Sunfish")}. See the examples for a demonstration.
+#' 
+#' Some species have length categories separated by sub-group. For example, length categories exist for both lentic and lotic populations of Brown Trout. The length values for a sub-group may be obtained by either including the species name in \code{species} and the sub-group name in \code{group} or by using the combined species and sub-group name, with the sub-group name in parentheses, in \code{species}. Both methods are demonstrated in the examples. Note that an error is returned if a species has sub-groups but neither method is used to define the sub-group.#' 
 #' 
 #' Individuals shorter than \dQuote{stock} length will be listed as \code{substock} if \code{use.names=TRUE} or \code{0} if \code{use.names=FALSE}.
 #' 
@@ -42,63 +45,112 @@
 #' @keywords manip
 #' 
 #' @examples
-#' #===== Create random data for three species
-#' set.seed(345234534)
-#' dbg <- data.frame(species=factor(rep(c("Bluegill"),30)),
-#'                   tl=round(rnorm(30,130,50),0))
-#' dlb <- data.frame(species=factor(rep(c("Largemouth Bass"),30)),
-#'                   tl=round(rnorm(30,350,60),0))
-#' dbt <- data.frame(species=factor(rep(c("Bluefin Tuna"),30)),
-#'                   tl=round(rnorm(30,1900,300),0))
-#' df <- rbind(dbg,dlb,dbt)
-#'
-#' #===== Simple examples
+#' #===== Simple examples -- 2 species, no groups, names as in PSDlit
+#' #----- Isolate simple data from PSDWRtest
+#' tmp <- subset(PSDWRtest,
+#'               species %in% c("Yellow Perch","Largemouth Bass"),
+#'               select=c("species","len"))
+#' peek(tmp,n=6)
+#' 
 #' #----- Add variable using category names -- non-formula notation
-#' df$PSD <- psdAdd(df$tl,df$species)
-#' peek(df,n=6)
+#' tmp$PSD <- psdAdd(tmp$len,tmp$species)
+#' peek(tmp,n=6)
 #' 
 #' #----- Add variable using category names -- formula notation
-#' df$PSD1 <- psdAdd(tl~species,data=df)
-#' peek(df,n=6)
+#' tmp$PSD1 <- psdAdd(len~species,data=tmp)
+#' peek(tmp,n=6)
 #' 
 #' #----- Add variable using length values as names
-#' #      Also turned off messaging of fish not in PSDlit
-#' df$PSD2 <- psdAdd(tl~species,data=df,use.names=FALSE,verbose=FALSE)
-#' peek(df,n=6)
+#' tmp$PSD2 <- psdAdd(len~species,data=tmp,use.names=FALSE)
+#' peek(tmp,n=6)
 #' 
 #' #----- Same as above but using dplyr
 #' if (require(dplyr)) {
-#'   df <- df %>%
-#'     mutate(PSD1A=psdAdd(tl,species,verbose=FALSE),
-#'            PSD2A=psdAdd(tl,species,use.names=FALSE,verbose=FALSE))
-#'   peek(df,n=6)
+#'   tmp <- tmp %>%
+#'     mutate(PSD1A=psdAdd(len,species),
+#'            PSD2A=psdAdd(len,species,use.names=FALSE))
+#'   peek(tmp,n=6)
 #' }
 #' 
-#' #===== Adding lengths besides the Gabelhouse lengths
-#' #----- Add a "minimum length" for Bluegill
-#' df$PSD3 <- psdAdd(tl~species,data=df,verbose=FALSE,
-#'                   addLens=list("Bluegill"=c("minLen"=175)))
-#' df$PSD3A <- psdAdd(tl~species,data=df,verbose=FALSE,
-#'                    addLens=list("Bluegill"=175))
-#' df$PSD3B <- psdAdd(tl~species,data=df,verbose=FALSE,
-#'                    addLens=list("Bluegill"=c("minLen"=175)),use.names=FALSE)
-#' head(df,n=6)
+#' #===== Add lengths besides Gabelhouse lengths (start over with same simple data)
+#' tmp <- subset(PSDWRtest,
+#'               species %in% c("Yellow Perch","Largemouth Bass"),
+#'               select=c("species","len"))
 #' 
-#' #----- Add add'l lengths and names for Bluegill and Largemouth Bass
-#' df$psd4 <- psdAdd(tl~species,data=df,verbose=FALSE,
-#'                   addLens=list("Bluegill"=175,
-#'                                "Largemouth Bass"=c(254,356)))
-#' peek(df,n=20)
+#' #----- Add a "minimum length" for one species
+#' tmp$PSD3 <- psdAdd(len~species,data=tmp,
+#'                    addLens=list("Yellow Perch"=c("minLen"=225)))
+#' tmp$PSD3A <- psdAdd(len~species,data=tmp,
+#'                     addLens=list("Yellow Perch"=225))
+#' tmp$PSD3B <- psdAdd(len~species,data=tmp,
+#'                     addLens=list("Yellow Perch"=c("minLen"=225)),use.names=FALSE)
+#' head(tmp,n=6)
 #' 
-#' #===== Example for a species with sub-groups
-#' dbt <- data.frame(species=factor(rep(c("Brown Trout"),30)),
-#'                   tl=round(rnorm(30,230,50),0))
-#' dlt <- data.frame(species=factor(rep(c("Lake Trout"),30)),
-#'                   tl=round(rnorm(30,550,60),0))
-#' df2 <- rbind(dbt,dlt)
+#' #----- Add add'l lengths and names for multiple species
+#' tmp$psd4 <- psdAdd(len~species,data=tmp,
+#'                    addLens=list("Yellow Perch"=175,
+#'                                 "Largemouth Bass"=c(254,306)))
+#' peek(tmp,n=20)
 #' 
-#' df2$psd <- psdAdd(tl~species,data=df2,group=list("Brown Trout"="lentic"))
-#' peek(df2,n=6)
+#' #===== Handle additional species in PSDlit but named differently
+#' #----- Isolate different species data from PSDWRtest
+#' tmp <- subset(PSDWRtest,
+#'               species %in% c("Bluegill Sunfish","Lean Lake Trout"),
+#'               select=c("species","len"))
+#' 
+#' #----- No "Bluegill Sunfish" in PSDlit, use thesaurus to note this is "Bluegill"
+#' #        Note: "Lean Lake Trout" not processed as not in PSDlit
+#' tmp$psd5 <- psdAdd(len~species,data=tmp,
+#'                    thesaurus=c("Bluegill"="Bluegill Sunfish"))
+#' peek(tmp,n=6)
+#' 
+#' #----- Process multiple species in PSDlit with different names
+#' #        Note: Can still use addLens=, but with original name
+#' thes <- c("Bluegill"="Bluegill Sunfish","Lake Trout"="Lean Lake Trout")
+#' tmp$psd6 <- psdAdd(len~species,data=tmp,thesaurus=thes)
+#' tmp$psd7 <- psdAdd(len~species,data=tmp,thesaurus=thes,
+#'                    addLens=list("Bluegill Sunfish"=c("minLen"=175)))
+#' peek(tmp,n=20)
+#' 
+#' #===== Example for a species with sub-groups but only one sub-group in data
+#' #----- Isolate species data from PSDWRtest ... only Brook Trout has sub-group
+#' tmp <- subset(PSDWRtest,
+#'               species %in% c("Yellow Perch","Brook Trout"),
+#'               select=c("species","len"))
+#' 
+#' #----- This will err as Brook Trout has sub-groups in PSDlit (as message notes)
+#' # tmp$psd8 <- psdAdd(len~species,data=tmp)
+#' 
+#' #----- Can choose "overall" sub-group with group=
+#' tmp$psd8 <- psdAdd(len~species,data=tmp,
+#'                    group=list("Brook Trout"="overall"))
+#' peek(tmp,n=10)
+#' 
+#' #----- Or can create species name with sub-group name in parentheses
+#' #        Note: this is more useful in next examples
+#' tmp$species2 <- ifelse(tmp$species=="Brook Trout","Brook Trout (overall)",
+#'                        tmp$species)
+#' tmp$psd8A <- psdAdd(len~species2,data=tmp) # note use of species2
+#' peek(tmp,n=10)
+#' 
+#' #===== Example for species with more than one sub-group in data
+#' #----- Isolate species data from PSDWRtest ... Brown Trout has two sub-groups
+#' tmp <- subset(PSDWRtest,
+#'               species %in% c("Yellow Perch","Largemouth Bass","Brown Trout"),
+#'               select=c("species","len","location"))
+#' peek(tmp,n=10)
+#' 
+#' #----- Must create a species name variable with sub-groups in parentheses
+#' #        Note: there are likely many ways to do this specific to each use-case
+#' tmp$species2 <- tmp$species
+#' tmp$species2[tmp$species=="Brown Trout" & 
+#'              tmp$location=="Trout Lake"] <- "Brown Trout (lotic)"
+#' tmp$species2[tmp$species=="Brown Trout" & 
+#'              tmp$location=="Brushy Creek"] <- "Brown Trout (lentic)"
+#' peek(tmp,n=10)
+#' 
+#' tmp$psd9 <- psdAdd(len~species2,data=tmp)
+#' peek(tmp,n=10)
 #' 
 #' @rdname psdAdd
 #' @export
@@ -108,7 +160,8 @@ psdAdd <- function (len,...) {
 
 #' @rdname psdAdd
 #' @export
-psdAdd.default <- function(len,species,group=NULL,units=c("mm","cm","in"),
+psdAdd.default <- function(len,species,thesaurus=NULL,
+                           group=NULL,units=c("mm","cm","in"),
                            use.names=TRUE,
                            as.fact=ifelse(is.null(addLens),use.names,FALSE),
                            addLens=NULL,verbose=TRUE,...) {
@@ -118,10 +171,10 @@ psdAdd.default <- function(len,species,group=NULL,units=c("mm","cm","in"),
   if (!inherits(species,c("character","factor")))
     STOP("'species' must be character or factor.")
   ## Prepare the PSD literature values data frame
-  PSDlit <- FSA::PSDlit
+  PSDlit <- iPrepPSDlit(thesaurus)
   ##  Find species that have known Gabelhouse lengths
-  # get list of species in data
-  specs <- unique(species)
+  # get list of species in data ... change from factor to character if necessary
+  specs <- as.character(unique(species))
   GLHSspecs <- specs[specs %in% unique(PSDlit$species)]
   ## Create data.frames with species that are NA and w/o Gabelhouse lengths and
   ## one with Gabelhouse lengths. The loop below will then start with a 
@@ -130,7 +183,7 @@ psdAdd.default <- function(len,species,group=NULL,units=c("mm","cm","in"),
   # - rownumbers is needed to get back the original order
   # - PSD will eventually have the Gabelhouse length categories
   data <- data.frame(len,species,rownums=seq_along(len),PSD=rep(NA,length(len)))
-  # data.frame where species is NA and doesn't have Gabelhousee length
+  # data.frame where species is NA and doesn't have Gabelhouse length
   ndata <- data[is.na(data$species) | !data$species %in% GLHSspecs,]
   if (verbose & nrow(ndata)>0)
     MESSAGE("Species in the data with no Gabelhouse (PSD) lengths in `PSDlit`: ",
@@ -138,7 +191,7 @@ psdAdd.default <- function(len,species,group=NULL,units=c("mm","cm","in"),
   # data.frame where species have Gabelhouse lengths ... make sure no NAs
   data <- data[data$species %in% GLHSspecs,]
   data <- data[!is.na(data$species),]
-
+  
   ## Cycle through each species where PSD values are known, add PSD categories
   ## and append to data.frame that contained species w/o Gabelhouse lengths
   for (i in seq_along(GLHSspecs)) {
@@ -150,10 +203,11 @@ psdAdd.default <- function(len,species,group=NULL,units=c("mm","cm","in"),
     else tmpAddLens <- NULL
     # get the Gabelhouse length categories
     if (!is.null(group)) {
-      if (GLHSspecs[i] %in% names(group)) group <- group[[GLHSspecs[i]]]
-      else group <- NULL
-    }
-    glhse <- psdVal(GLHSspecs[i],group=group,units=units,addLens=tmpAddLens)
+      if (GLHSspecs[i] %in% names(group)) tmp_group <- group[[GLHSspecs[i]]]
+      else tmp_group <- NULL
+    } else tmp_group <- NULL
+    glhse <- psdVal(GLHSspecs[i],group=tmp_group,units=units,addLens=tmpAddLens,
+                    dat=PSDlit)
     # computes the Gabelhouse length categories and adds to the data frame
     if (all(is.na(tmpdf$len))) {
       if (verbose) message("All values in 'len' were missing for ",GLHSspecs[i])
@@ -176,7 +230,8 @@ psdAdd.default <- function(len,species,group=NULL,units=c("mm","cm","in"),
 
 #' @rdname psdAdd
 #' @export
-psdAdd.formula <- function(len,data=NULL,group=NULL,units=c("mm","cm","in"),
+psdAdd.formula <- function(len,data=NULL,thesaurus=NULL,
+                           group=NULL,units=c("mm","cm","in"),
                            use.names=TRUE,
                            as.fact=ifelse(is.null(addLens),use.names,FALSE),
                            addLens=NULL,verbose=TRUE,...) {
@@ -196,6 +251,46 @@ psdAdd.formula <- function(len,data=NULL,group=NULL,units=c("mm","cm","in"),
     STOP("'len' must have one and only one factor variable (species)",
          " on right-hand-side.")
   ## Send to default method
-  psdAdd.default(tmp$mf[[tmp$Rpos]],tmp$mf[[tmp$EFactPos]],group,units,
+  psdAdd.default(tmp$mf[[tmp$Rpos]],tmp$mf[[tmp$EFactPos]],thesaurus,group,units,
                  use.names,as.fact,addLens,verbose,...)
+}
+
+
+# ==============================================================================
+# Internal -- prepare PSDlit by loading it and replacing its default names with
+#             names in the thesaurus, if any
+# ==============================================================================
+iPrepPSDlit <- function(thesaurus) {
+  # Load PSDlit into dat in this function namespace
+  dat <- FSA::PSDlit
+  if (!is.null(thesaurus)) {
+    # Some sanity checks on thesaurus
+    if (!(is.vector(thesaurus) | is.list(thesaurus)))
+      STOP("'thesaurus' must be either a vector or list. ",
+           "Make sure it is not 'factor'ed.")
+    if (length(names(thesaurus))==0)
+      STOP("Values in 'thesaurus' must be named (with species names from 'PSDlit'.")
+    if (!is.character(thesaurus))
+      STOP("Values in 'thesaurus' must be strings of species names.")
+    # thesaurus appears to be a named vector/list of strings ... start processing
+    # Alphabetize names in thesaurus to match PSDlit
+    thesaurus <- thesaurus[order(names(thesaurus))]
+    # Remove name from thesaurus if not in dat/PSDlit
+    thes.nokeep <- which(!names(thesaurus) %in% unique(dat$species))
+    if (length(thes.nokeep)>0) {
+      MESSAGE("The following species names were in 'thesaurus' but do ",
+              "not have an entry in 'PSDlit' and will be ignored: ",
+              iStrCollapse(names(thesaurus)[thes.nokeep]),".")
+      thesaurus <- thesaurus[-thes.nokeep]      
+    }
+    # Find dat/PSDlit species in kept thesaurus and change names to thesaurus names
+    if (length(thesaurus)>0) {
+      thes.pos <- which(dat$species %in% names(thesaurus))
+      dat$species[thes.pos] <- unlist(thesaurus)
+      # Re-alphabetize dat/PSDlit
+      dat <- dat[order(dat$species),]
+    }
+  }
+  # Return dat/PSDlit
+  dat
 }
