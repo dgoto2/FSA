@@ -249,7 +249,7 @@ PSDWRtest$psd <- psdAdd(len~species2,data=PSDWRtest)
 peek(PSDWRtest,n=20)
 ```
 
-Handling these types of "issues" in conjunction with computing relative weights is illustrated in the companion [XXXX]().
+Handling these types of "issues" in conjunction with computing relative weights is illustrated in [this companion vignette](https://fishr-core-team.github.io/FSA/articles/Computing_PSDs_and_RelativeWeights.html).
 
 
 
