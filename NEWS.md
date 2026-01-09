@@ -1,4 +1,4 @@
-# FSA 0.10.9000
+# FSA 0.10.1
 * Updated the PSD and Relative Weight computation articles to reflect the changes to `psdVal()`, `psdAdd()`, `wsVal()`, and `wrAdd()`.
 * `chapmanRobson()`: Added catch for when n+T<1 and n+T<2. This addresses [#131](https://github.com/fishR-Core-Team/FSA/issues/131)).
 * `metaM()`: Added `method="HamelCope"` to address [#133](https://github.com/fishR-Core-Team/FSA/issues/133). A few minor edits to documentation.
@@ -134,11 +134,11 @@
 * `fitPlot()`: **REMOVED** (to `FSAmisc`).
 * `fsaNews()` and `FSANews()`: **Removed**.
 * `psdAdd()`: Modified. Changed the way `PSDlit` was loaded into the function environment so that `FSA::psdAdd()` will work. Addresses [#85](https://github.com/fishR-Core-Team/FSA/issues/85).
-* `PSDLit`: Modified. Added info for Utah Chub (from [here](https://webpages.uidaho.edu/quistlab/publications/NAJFM_2021_Black_et_al_UTC_Ws_length_categories.pdf); address [#84](https://github.com/fishR-Core-Team/FSA/issues/84)).
+* `PSDLit`: Modified. Added info for Utah Chub (from [here](https://www.usgs.gov/publications/proposed-standard-weight-ws-equation-and-length-categories-utah-chub); address [#84](https://github.com/fishR-Core-Team/FSA/issues/84)).
 * `psdVal()`: Modified. Changed the way `PSDlit` was loaded into the function environment so that `FSA::psdVal()` will work. Addresses [#85](https://github.com/fishR-Core-Team/FSA/issues/85).
 * `residPlot()`: **REMOVED** (to `FSAmisc`).
 * `wrAdd()`: Modified. Changed the way `WSlit` was loaded into the function environment so that `FSA::wrAdd()` will work. Addresses [#85](https://github.com/fishR-Core-Team/FSA/issues/85).
-* `WSLit`: Modified. Added info for Utah Chub (from [here](https://webpages.uidaho.edu/quistlab/publications/NAJFM_2021_Black_et_al_UTC_Ws_length_categories.pdf); address [#84](https://github.com/fishR-Core-Team/FSA/issues/84)).
+* `WSLit`: Modified. Added info for Utah Chub (from [here](https://www.usgs.gov/publications/proposed-standard-weight-ws-equation-and-length-categories-utah-chub); address [#84](https://github.com/fishR-Core-Team/FSA/issues/84)).
 * `wsVal()`: Modified. Changed the way `WSlit` was loaded into the function environment so that `FSA::wsVal()` will work. Addresses [#85](https://github.com/fishR-Core-Team/FSA/issues/85).
 
 # FSA 0.9.1

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">FSA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.10.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.10.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -188,209 +188,263 @@
 <span class="r-in"><span><span class="co">## Simple Examples -- Von B</span></span></span>
 <span class="r-in"><span><span class="op">(</span> <span class="va">vb1</span> <span class="op">&lt;-</span> <span class="fu">vbFuns</span><span class="op">(</span><span class="op">)</span> <span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'vbFuns()' is deprecated as of v0.10.0. Please use 'makeGrowthFun()' instead as it will be continuously updated in the future.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> function(t,Linf,K=NULL,t0=NULL) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (length(Linf)==3) { K &lt;- Linf[[2]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     t0 &lt;- Linf[[3]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf &lt;- Linf[[1]] }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf*(1-exp(-K*(t-t0)))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001b13b7d3be0&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001b13bb5f878&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (t, Linf, K = NULL, t0 = NULL) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (length(Linf) == 3) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         K &lt;- Linf[[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         t0 &lt;- Linf[[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         Linf &lt;- Linf[[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf * (1 - exp(-K * (t - t0)))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001d723c69fb8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001d7267177d0&gt;</span>
 <span class="r-in"><span><span class="va">ages</span> <span class="op">&lt;-</span> <span class="fl">0</span><span class="op">:</span><span class="fl">20</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">vb1</span><span class="op">(</span><span class="va">ages</span>,Linf<span class="op">=</span><span class="fl">20</span>,K<span class="op">=</span><span class="fl">0.3</span>,t0<span class="op">=</span><span class="op">-</span><span class="fl">0.2</span><span class="op">)</span><span class="op">~</span><span class="va">ages</span>,type<span class="op">=</span><span class="st">"b"</span>,pch<span class="op">=</span><span class="fl">19</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="growthModels-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="op">(</span> <span class="va">vb2</span> <span class="op">&lt;-</span> <span class="fu">vbFuns</span><span class="op">(</span><span class="st">"Francis"</span><span class="op">)</span> <span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'vbFuns()' is deprecated as of v0.10.0. Please use 'makeGrowthFun()' instead as it will be continuously updated in the future.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> function(t,L1,L2=NULL,L3=NULL,t1,t3=NULL) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (length(L1)==3) { L2 &lt;- L1[[2]]; L3 &lt;- L1[[3]]; L1 &lt;- L1[[1]] }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (length(t1)==2) { t3 &lt;- t1[[2]]; t1 &lt;- t1[[1]] }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     r &lt;- (L3-L2)/(L2-L1)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     L1+(L3-L1)*((1-r^(2*((t-t1)/(t3-t1))))/(1-r^2))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001b13b8875f0&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001b13be34878&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (t, L1, L2 = NULL, L3 = NULL, t1, t3 = NULL) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (length(L1) == 3) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         L2 &lt;- L1[[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         L3 &lt;- L1[[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         L1 &lt;- L1[[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (length(t1) == 2) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         t3 &lt;- t1[[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         t1 &lt;- t1[[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     r &lt;- (L3 - L2)/(L2 - L1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     L1 + (L3 - L1) * ((1 - r^(2 * ((t - t1)/(t3 - t1))))/(1 - </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         r^2))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001d723c47ab0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001d725261d88&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">vb2</span><span class="op">(</span><span class="va">ages</span>,L1<span class="op">=</span><span class="fl">10</span>,L2<span class="op">=</span><span class="fl">19</span>,L3<span class="op">=</span><span class="fl">20</span>,t1<span class="op">=</span><span class="fl">2</span>,t3<span class="op">=</span><span class="fl">18</span><span class="op">)</span><span class="op">~</span><span class="va">ages</span>,type<span class="op">=</span><span class="st">"b"</span>,pch<span class="op">=</span><span class="fl">19</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="growthModels-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="op">(</span> <span class="va">vb2c</span> <span class="op">&lt;-</span> <span class="fu">vbFuns</span><span class="op">(</span><span class="st">"Francis"</span>,simple<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op">)</span>   <span class="co"># compare to vb2</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'vbFuns()' is deprecated as of v0.10.0. Please use 'makeGrowthFun()' instead as it will be continuously updated in the future.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> function(t,L1,L2,L3,t1,t3) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     r &lt;- (L3-L2)/(L2-L1)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     L1+(L3-L1)*((1-r^(2*((t-t1)/(t3-t1))))/(1-r^2))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001b13b8a69c8&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001b13c5a2618&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (t, L1, L2, L3, t1, t3) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     r &lt;- (L3 - L2)/(L2 - L1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     L1 + (L3 - L1) * ((1 - r^(2 * ((t - t1)/(t3 - t1))))/(1 - </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         r^2))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001d723c458f0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001d724b6f538&gt;</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Simple Examples -- Gompertz</span></span></span>
 <span class="r-in"><span><span class="op">(</span> <span class="va">gomp1</span> <span class="op">&lt;-</span> <span class="fu">GompertzFuns</span><span class="op">(</span><span class="op">)</span> <span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'GompertzFuns()' is deprecated as of v0.10.0. Please use 'makeGrowthFun()' instead as it will be continuously updated in the future.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> function(t,Linf,gi=NULL,ti=NULL) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (length(Linf)==3) { gi &lt;- Linf[[2]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     ti &lt;- Linf[[3]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf &lt;- Linf[[1]] }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf*exp(-exp(-gi*(t-ti)))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001b13c8673f0&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001b13c832670&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (t, Linf, gi = NULL, ti = NULL) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (length(Linf) == 3) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         gi &lt;- Linf[[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         ti &lt;- Linf[[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         Linf &lt;- Linf[[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf * exp(-exp(-gi * (t - ti)))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001d728867ae8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001d728859880&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">gomp1</span><span class="op">(</span><span class="va">ages</span>,Linf<span class="op">=</span><span class="fl">800</span>,gi<span class="op">=</span><span class="fl">0.5</span>,ti<span class="op">=</span><span class="fl">5</span><span class="op">)</span><span class="op">~</span><span class="va">ages</span>,type<span class="op">=</span><span class="st">"b"</span>,pch<span class="op">=</span><span class="fl">19</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="growthModels-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="op">(</span> <span class="va">gomp2</span> <span class="op">&lt;-</span> <span class="fu">GompertzFuns</span><span class="op">(</span><span class="st">"Ricker2"</span><span class="op">)</span> <span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'GompertzFuns()' is deprecated as of v0.10.0. Please use 'makeGrowthFun()' instead as it will be continuously updated in the future.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> function(t,L0,b=NULL,gi=NULL) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (length(L0)==3) { b &lt;- L0[[2]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     gi &lt;- L0[[3]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     L0 &lt;- L0[[1]] }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     L0*exp(b*(1-exp(-gi*t)))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001b13c87e4f0&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001b13c786ed8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (t, L0, b = NULL, gi = NULL) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (length(L0) == 3) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         b &lt;- L0[[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         gi &lt;- L0[[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         L0 &lt;- L0[[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     L0 * exp(b * (1 - exp(-gi * t)))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001d728868e60&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001d72863f0e8&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">gomp2</span><span class="op">(</span><span class="va">ages</span>,L0<span class="op">=</span><span class="fl">2</span>,b<span class="op">=</span><span class="fl">6</span>,gi<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span><span class="op">~</span><span class="va">ages</span>,type<span class="op">=</span><span class="st">"b"</span>,pch<span class="op">=</span><span class="fl">19</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="growthModels-4.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="op">(</span> <span class="va">gomp2c</span> <span class="op">&lt;-</span> <span class="fu">GompertzFuns</span><span class="op">(</span><span class="st">"Ricker2"</span>,simple<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op">)</span>   <span class="co"># compare to gomp2</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'GompertzFuns()' is deprecated as of v0.10.0. Please use 'makeGrowthFun()' instead as it will be continuously updated in the future.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> function(t,L0,b,gi) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     L0*exp(b*(1-exp(-gi*t)))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001b13c883d20&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001b13c5d1238&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (t, L0, b, gi) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     L0 * exp(b * (1 - exp(-gi * t)))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001d72886bd50&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001d7282b6ab0&gt;</span>
 <span class="r-in"><span><span class="op">(</span> <span class="va">gompT</span> <span class="op">&lt;-</span> <span class="fu">GompertzFuns</span><span class="op">(</span><span class="st">"Troynikov1"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'GompertzFuns()' is deprecated as of v0.10.0. Please use 'makeGrowthFun()' instead as it will be continuously updated in the future.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> function(Lm,dt,Linf,gi=NULL) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (length(Linf)==2) { gi &lt;- Linf[2]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf &lt;- Linf[1] }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf*((Lm/Linf)^exp(-gi*dt))-Lm</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001b13c89b1a0&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001b138c26060&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (Lm, dt, Linf, gi = NULL) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (length(Linf) == 2) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         gi &lt;- Linf[2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         Linf &lt;- Linf[1]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf * ((Lm/Linf)^exp(-gi * dt)) - Lm</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001d728866cd8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001d728217270&gt;</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Simple Examples -- Richards</span></span></span>
 <span class="r-in"><span><span class="op">(</span> <span class="va">rich1</span> <span class="op">&lt;-</span> <span class="fu">RichardsFuns</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span> <span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'RichardsFuns()' is deprecated as of v0.10.0. Please use 'makeGrowthFun()' instead as it will be continuously updated in the future.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> function(t,Linf,k=NULL,ti=NULL,b1=NULL) { #eqn 5 from Tjorve &amp; Tjorve (2010)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (length(Linf)==4) { k &lt;- Linf[[2]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     ti &lt;- Linf[[3]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     b1 &lt;- Linf[[4]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf &lt;- Linf[[1]] }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf/((1+b1*exp(-k*(t-ti)))^(1/b1))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001b138c5f6c8&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001b138e12ac0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (t, Linf, k = NULL, ti = NULL, b1 = NULL) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (length(Linf) == 4) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         k &lt;- Linf[[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         ti &lt;- Linf[[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         b1 &lt;- Linf[[4]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         Linf &lt;- Linf[[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf/((1 + b1 * exp(-k * (t - ti)))^(1/b1))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001d72812c6d8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001d728125f20&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">rich1</span><span class="op">(</span><span class="va">ages</span>,Linf<span class="op">=</span><span class="fl">800</span>,k<span class="op">=</span><span class="fl">0.5</span>,ti<span class="op">=</span><span class="fl">3</span>,b1<span class="op">=</span><span class="fl">0.15</span><span class="op">)</span><span class="op">~</span><span class="va">ages</span>,type<span class="op">=</span><span class="st">"b"</span>,pch<span class="op">=</span><span class="fl">19</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="growthModels-5.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="op">(</span> <span class="va">rich2</span> <span class="op">&lt;-</span> <span class="fu">RichardsFuns</span><span class="op">(</span><span class="fl">2</span><span class="op">)</span> <span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'RichardsFuns()' is deprecated as of v0.10.0. Please use 'makeGrowthFun()' instead as it will be continuously updated in the future.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> function(t,Linf,k=NULL,t0=NULL,b2=NULL) { #eqn 3(alt) from Tjorve &amp; Tjorve (2010)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (length(Linf)==4) { k &lt;- Linf[[2]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     t0 &lt;- Linf[[3]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     b2 &lt;- Linf[[4]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf &lt;- Linf[[1]] }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf/((1+exp(-k*(t-t0)))^(-b2))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001b138c67430&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001b13928c618&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (t, Linf, k = NULL, t0 = NULL, b2 = NULL) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (length(Linf) == 4) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         k &lt;- Linf[[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         t0 &lt;- Linf[[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         b2 &lt;- Linf[[4]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         Linf &lt;- Linf[[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf/((1 + exp(-k * (t - t0)))^(-b2))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001d72812a2e8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001d727f62680&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">rich2</span><span class="op">(</span><span class="va">ages</span>,Linf<span class="op">=</span><span class="fl">800</span>,k<span class="op">=</span><span class="fl">0.5</span>,t0<span class="op">=</span><span class="op">-</span><span class="fl">1</span>,b2<span class="op">=</span><span class="fl">6</span><span class="op">)</span><span class="op">~</span><span class="va">ages</span>,type<span class="op">=</span><span class="st">"b"</span>,pch<span class="op">=</span><span class="fl">19</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="growthModels-6.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="op">(</span> <span class="va">rich3</span> <span class="op">&lt;-</span> <span class="fu">RichardsFuns</span><span class="op">(</span><span class="fl">3</span><span class="op">)</span> <span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'RichardsFuns()' is deprecated as of v0.10.0. Please use 'makeGrowthFun()' instead as it will be continuously updated in the future.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> function(t,Linf,k=NULL,L0=NULL,b3=NULL) { #eqn 7 from Tjorve &amp; Tjorve (2010)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (length(Linf)==4) { k &lt;- Linf[[2]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     L0 &lt;- Linf[[3]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     b3 &lt;- Linf[[4]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf &lt;- Linf[[1]] }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf*(1+(((L0/Linf)^(1-b3))-1)*exp(-k*t))^(1/(1-b3))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001b138c83248&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001b139383d98&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (t, Linf, k = NULL, L0 = NULL, b3 = NULL) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (length(Linf) == 4) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         k &lt;- Linf[[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         L0 &lt;- Linf[[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         b3 &lt;- Linf[[4]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         Linf &lt;- Linf[[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf * (1 + (((L0/Linf)^(1 - b3)) - 1) * exp(-k * t))^(1/(1 - </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         b3))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001d72812bc10&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001d7274b1d60&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">rich3</span><span class="op">(</span><span class="va">ages</span>,Linf<span class="op">=</span><span class="fl">800</span>,k<span class="op">=</span><span class="fl">0.5</span>,L0<span class="op">=</span><span class="fl">50</span>,b3<span class="op">=</span><span class="fl">1.5</span><span class="op">)</span><span class="op">~</span><span class="va">ages</span>,type<span class="op">=</span><span class="st">"b"</span>,pch<span class="op">=</span><span class="fl">19</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="growthModels-7.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="op">(</span> <span class="va">rich4</span> <span class="op">&lt;-</span> <span class="fu">RichardsFuns</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span> <span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'RichardsFuns()' is deprecated as of v0.10.0. Please use 'makeGrowthFun()' instead as it will be continuously updated in the future.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> function(t,Linf,k=NULL,ti=NULL,b2=NULL) { #eqn 4 from Tjorve &amp; Tjorve (2010)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (length(Linf)==4) { k &lt;- Linf[[2]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     ti &lt;- Linf[[3]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     b2 &lt;- Linf[[4]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf &lt;- Linf[[1]] }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf*(1-(1/b2)*exp(-k*(t-ti)))^b2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001b138c94858&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001b1395a1840&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (t, Linf, k = NULL, ti = NULL, b2 = NULL) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (length(Linf) == 4) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         k &lt;- Linf[[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         ti &lt;- Linf[[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         b2 &lt;- Linf[[4]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         Linf &lt;- Linf[[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf * (1 - (1/b2) * exp(-k * (t - ti)))^b2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001d72811e080&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001d726fba358&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">rich4</span><span class="op">(</span><span class="va">ages</span>,Linf<span class="op">=</span><span class="fl">800</span>,k<span class="op">=</span><span class="fl">0.5</span>,ti<span class="op">=</span><span class="fl">3</span>,b2<span class="op">=</span><span class="fl">6</span><span class="op">)</span><span class="op">~</span><span class="va">ages</span>,type<span class="op">=</span><span class="st">"b"</span>,pch<span class="op">=</span><span class="fl">19</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="growthModels-8.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="op">(</span> <span class="va">rich5</span> <span class="op">&lt;-</span> <span class="fu">RichardsFuns</span><span class="op">(</span><span class="fl">5</span><span class="op">)</span> <span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'RichardsFuns()' is deprecated as of v0.10.0. Please use 'makeGrowthFun()' instead as it will be continuously updated in the future.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> function(t,Linf,k=NULL,ti=NULL,b3=NULL) { #eqn 6 from Tjorve &amp; Tjorve (2010)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (length(Linf)==4) { k &lt;- Linf[[2]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     ti &lt;- Linf[[3]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     b3 &lt;- Linf[[4]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf &lt;- Linf[[1]] }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf*(1+(b3-1)*exp(-k*(t-ti)))^(1/(1-b3))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001b138c8c690&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001b1396d34f8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (t, Linf, k = NULL, ti = NULL, b3 = NULL) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (length(Linf) == 4) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         k &lt;- Linf[[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         ti &lt;- Linf[[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         b3 &lt;- Linf[[4]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         Linf &lt;- Linf[[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf * (1 + (b3 - 1) * exp(-k * (t - ti)))^(1/(1 - b3))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001d72811fa50&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001d726e4e970&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">rich5</span><span class="op">(</span><span class="va">ages</span>,Linf<span class="op">=</span><span class="fl">800</span>,k<span class="op">=</span><span class="fl">0.5</span>,ti<span class="op">=</span><span class="fl">3</span>,b3<span class="op">=</span><span class="fl">0.95</span><span class="op">)</span><span class="op">~</span><span class="va">ages</span>,type<span class="op">=</span><span class="st">"b"</span>,pch<span class="op">=</span><span class="fl">19</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="fu">rich5</span><span class="op">(</span><span class="va">ages</span>,Linf<span class="op">=</span><span class="fl">800</span>,k<span class="op">=</span><span class="fl">0.5</span>,ti<span class="op">=</span><span class="fl">3</span>,b3<span class="op">=</span><span class="fl">1.5</span><span class="op">)</span><span class="op">~</span><span class="va">ages</span>,type<span class="op">=</span><span class="st">"b"</span>,pch<span class="op">=</span><span class="fl">19</span>,col<span class="op">=</span><span class="st">"blue"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="growthModels-9.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="op">(</span> <span class="va">rich2c</span> <span class="op">&lt;-</span> <span class="fu">RichardsFuns</span><span class="op">(</span><span class="fl">2</span>,simple<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op">)</span> <span class="co"># compare to rich2</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'RichardsFuns()' is deprecated as of v0.10.0. Please use 'makeGrowthFun()' instead as it will be continuously updated in the future.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> function(t,Linf,k,t0,b2) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf/((1+exp(-k*(t-t0)))^(-b2))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001b138c81d98&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001b13999bd20&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (t, Linf, k, t0, b2) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf/((1 + exp(-k * (t - t0)))^(-b2))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001d72812b388&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001d726c31140&gt;</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Simple Examples -- Logistic</span></span></span>
 <span class="r-in"><span><span class="op">(</span> <span class="va">log1</span> <span class="op">&lt;-</span> <span class="fu">logisticFuns</span><span class="op">(</span><span class="op">)</span> <span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'logisticFuns()' is deprecated as of v0.10.0. Please use 'makeGrowthFun()' instead as it will be continuously updated in the future.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> function(t,Linf,gninf=NULL,ti=NULL) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (length(Linf)==3) { gninf &lt;- Linf[[2]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     ti &lt;- Linf[[3]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf &lt;- Linf[[1]] }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf/(1+exp(-gninf*(t-ti)))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001b139b2dd88&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001b139b75600&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (t, Linf, gninf = NULL, ti = NULL) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (length(Linf) == 3) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         gninf &lt;- Linf[[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         ti &lt;- Linf[[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         Linf &lt;- Linf[[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf/(1 + exp(-gninf * (t - ti)))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001d726a35d48&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001d726a259c8&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">log1</span><span class="op">(</span><span class="va">ages</span>,Linf<span class="op">=</span><span class="fl">800</span>,gninf<span class="op">=</span><span class="fl">0.5</span>,ti<span class="op">=</span><span class="fl">5</span><span class="op">)</span><span class="op">~</span><span class="va">ages</span>,type<span class="op">=</span><span class="st">"b"</span>,pch<span class="op">=</span><span class="fl">19</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="growthModels-10.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="op">(</span> <span class="va">log2</span> <span class="op">&lt;-</span> <span class="fu">logisticFuns</span><span class="op">(</span><span class="st">"CJ2"</span><span class="op">)</span> <span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'logisticFuns()' is deprecated as of v0.10.0. Please use 'makeGrowthFun()' instead as it will be continuously updated in the future.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> function(t,Linf,gninf=NULL,a=NULL) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (length(Linf)==3) { gninf &lt;- Linf[[2]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     a &lt;- Linf[[3]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf &lt;- Linf[[1]] }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf/(1+a*exp(-gninf*t))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001b139b3adc8&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001b139c985c8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (t, Linf, gninf = NULL, a = NULL) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (length(Linf) == 3) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         gninf &lt;- Linf[[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         a &lt;- Linf[[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         Linf &lt;- Linf[[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf/(1 + a * exp(-gninf * t))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001d726a2d178&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001d726897f40&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2</a></span><span class="op">(</span><span class="va">ages</span>,Linf<span class="op">=</span><span class="fl">800</span>,gninf<span class="op">=</span><span class="fl">0.5</span>,a<span class="op">=</span><span class="fl">10</span><span class="op">)</span><span class="op">~</span><span class="va">ages</span>,type<span class="op">=</span><span class="st">"b"</span>,pch<span class="op">=</span><span class="fl">19</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="growthModels-11.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="op">(</span> <span class="va">log2c</span> <span class="op">&lt;-</span> <span class="fu">logisticFuns</span><span class="op">(</span><span class="st">"CJ2"</span>,simple<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op">)</span> <span class="co"># compare to log2</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'logisticFuns()' is deprecated as of v0.10.0. Please use 'makeGrowthFun()' instead as it will be continuously updated in the future.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> function(t,Linf,gninf,a) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf/(1+a*exp(-gninf*t))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001b139b4e5b8&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001b139dcb2e8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (t, Linf, gninf, a) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf/(1 + a * exp(-gninf * t))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001d726a2ddf0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001d725836a40&gt;</span>
 <span class="r-in"><span><span class="op">(</span> <span class="va">log3</span> <span class="op">&lt;-</span> <span class="fu">logisticFuns</span><span class="op">(</span><span class="st">"Karkach"</span><span class="op">)</span> <span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'logisticFuns()' is deprecated as of v0.10.0. Please use 'makeGrowthFun()' instead as it will be continuously updated in the future.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> function(t,Linf,L0=NULL,gninf=NULL) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (length(Linf)==3) { L0 &lt;- Linf[[2]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     gninf &lt;- Linf[[3]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Linf &lt;- Linf[[1]] }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     L0*Linf/(L0+(Linf-L0)*exp(-gninf*t))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001b139b65cb8&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001b139e2c6b0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (t, Linf, L0 = NULL, gninf = NULL) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (length(Linf) == 3) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         L0 &lt;- Linf[[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         gninf &lt;- Linf[[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         Linf &lt;- Linf[[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     L0 * Linf/(L0 + (Linf - L0) * exp(-gninf * t))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001d726a324c8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001d7257448b0&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">log3</span><span class="op">(</span><span class="va">ages</span>,L0<span class="op">=</span><span class="fl">10</span>,Linf<span class="op">=</span><span class="fl">800</span>,gninf<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span><span class="op">~</span><span class="va">ages</span>,type<span class="op">=</span><span class="st">"b"</span>,pch<span class="op">=</span><span class="fl">19</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="growthModels-12.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="op">(</span> <span class="va">log4</span> <span class="op">&lt;-</span> <span class="fu">logisticFuns</span><span class="op">(</span><span class="st">"Haddon"</span><span class="op">)</span> <span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'logisticFuns()' is deprecated as of v0.10.0. Please use 'makeGrowthFun()' instead as it will be continuously updated in the future.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> function(Lm,dLmax,L50=NULL,L95=NULL) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     if (length(dLmax)==3) { L50 &lt;- dLmax[2]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     L95 &lt;- dLmax[3]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     dLmax &lt;- dLmax[1] }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     dLmax/(1+exp(log(19)*((Lm-L50)/(L95-L50))))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001b139b5c9a8&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001b139ff52b0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (Lm, dLmax, L50 = NULL, L95 = NULL) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (length(dLmax) == 3) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         L50 &lt;- dLmax[2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         L95 &lt;- dLmax[3]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         dLmax &lt;- dLmax[1]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     dLmax/(1 + exp(log(19) * ((Lm - L50)/(L95 - L50))))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x000001d726a33ae0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x000001d724d5a488&gt;</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">###########################################################</span></span></span>
@@ -417,7 +471,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> K     0.22493    0.06922   3.250  0.00125 ** </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> t0   -2.55738    0.47496  -5.384 1.24e-07 ***</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ---</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Residual standard error: 1.053 on 400 degrees of freedom</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -445,7 +499,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> L2 11.41275    0.08344  136.78   &lt;2e-16 ***</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> L3 13.72912    0.32219   42.61   &lt;2e-16 ***</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ---</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Residual standard error: 1.053 on 400 degrees of freedom</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -476,7 +530,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> L3 12.95500    0.18740   69.13  &lt; 2e-16 ***</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> K   0.22494    0.06922    3.25  0.00125 ** </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ---</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Residual standard error: 1.053 on 400 degrees of freedom</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -503,7 +557,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>
