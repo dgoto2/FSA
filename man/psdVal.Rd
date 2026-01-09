@@ -11,7 +11,8 @@ psdVal(
   addLens = NULL,
   addNames = NULL,
   incl.zero = TRUE,
-  showJustSource = FALSE
+  showJustSource = FALSE,
+  dat = NULL
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ psdVal(
 \item{incl.zero}{A logical that indicates if a zero is included in the first position of the returned vector (DEFAULT) or not. This position will be named \dQuote{substock}. See details.}
 
 \item{showJustSource}{A logical that indicates whether just the literature source information should be returned (\code{TRUE}) or not. If \code{TRUE} this will NOT return any of the Gabelhouse length information.}
+
+\item{dat}{Data.frame of Gabelhouse length categories for all species. Defaults to `PSDlit` and is generally not used by the user (this simplifies use of this function in \code{psdAdd}).}
 }
 \value{
 A vector of minimum values for length categories for the chosen species.
@@ -37,6 +40,8 @@ Returns a vector with the five Gabelhouse lengths for a chosen species.
 }
 \details{
 Finds the Gabelhouse lengths from \code{data(PSDlit)} for the species given in \code{species}. The species name must be spelled exactly (including capitalization) as it appears in \code{data(PSDlit)}. Type \code{psdVal()} to see the list of species and how they are spelled.
+
+Some species have length categories separated by sub-group. For example, length categories exist for both lentic and lotic populations of Brown Trout. The length values for a sub-group may be obtained by either including the species name in \code{species} and the sub-group name in \code{group} or by using the combined species and sub-group name, with the sub-group name in parentheses, in \code{species}. Both methods are demonstrated in the examples. Note that an error is returned if a species has sub-groups but neither method is used to define the sub-group.#' 
 
 A zero is included in the first position of the returned vector if \code{incl.zero=TRUE}. This is useful when computing PSD values with a data.frame that contains fish smaller than the stock length.
 
@@ -59,10 +64,15 @@ psdVal("Bluegill",units="in",incl.zero=FALSE)
 psdVal("Bluegill",showJustSource=TRUE)
 
 #===== For species that have sub-groups
+#-----   using group= argument
 psdVal("Brown Trout",group="lentic")
 psdVal("Brown Trout",group="lotic")
-psdVal("Palmetto Bass",group="revised")
-psdVal("Palmetto Bass",group="original")
+#-----   group combined in species name, so no group= use
+psdVal("Brown Trout (lentic)")
+
+#===== For species with revised values
+psdVal("Palmetto Bass")
+psdVal("Palmetto Bass (original)")
 
 #===== Adding user-defined categories
 #-----   with lengths and names separately in addLens= and addNames=

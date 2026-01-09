@@ -30,6 +30,9 @@ Original summary table from Dr. Michael Hansen, University of Wisconsin-Stevens 
 \description{
 Cutoffs for the Gabelhouse five-cell length categories for a variety of species.
 }
+\details{
+Entries for some species (e.g., \dQuote{Muskellunge} and \dQuote{Walleye}) have been duplicated for sub-groups to facilitate use with relative weight calculations. For example, entries for \dQuote{Muskellunge (overall)}, \dQuote{Muskellunge (female)}, and \dQuote{Muskellunge (male)} are duplicates of the entry for \dQuote{Muskellunge}; i.e., these entries in \code{PSDlit} are not necessarily just for those sub-groups but this allows for seamless similar computations of relative weights for these sub-groups.
+}
 \section{Topic(s)}{
 
  \itemize{

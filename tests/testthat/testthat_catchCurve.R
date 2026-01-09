@@ -9,6 +9,12 @@ cr <- chapmanRobson(catch~age,data=d,ages2use=2:6)
 cr1 <- chapmanRobson(catch~age,data=d,ages2use=2:6,zmethod="Hoenigetal")
 cr2 <- chapmanRobson(catch~age,data=d,ages2use=2:6,zmethod="original")
 
+# for testing too small CPE in catch in chapmanRobson()
+d2 <- data.frame(age=7:13,
+                 cpe=c(0.089,0.070,0.055,0.024,0.018,0.023,0.028),
+                 cpex2=c(0.178,0.140,0.110,0.048,0.036,0.046,0.056),
+                 cpex10=c(0.89,0.70,0.55,0.24,0.18,0.23,0.28)) 
+
 
 ## Test Messages ----
 test_that("catchCurve() messages",{
@@ -133,6 +139,12 @@ test_that("chapmanRobson errors and warnings",{
   # bad args in confint
   expect_error(plot(cr,ylim=c(3,7,10)),
                "may not have more than two")
+  # too small CPE in catch
+  expect_error(chapmanRobson(cpe~age,data=d2),
+               "The sum of")
+  expect_error(chapmanRobson(cpex2~age,data=d2),
+               "The sum of")
+  expect_no_error(chapmanRobson(cpex10~age,data=d2))
 })
 
 

@@ -1,3 +1,15 @@
+# FSA 0.10.1
+* Updated the PSD and Relative Weight computation articles to reflect the changes to `psdVal()`, `psdAdd()`, `wsVal()`, and `wrAdd()`.
+* `chapmanRobson()`: Added catch for when n+T<1 and n+T<2. This addresses [#131](https://github.com/fishR-Core-Team/FSA/issues/131)).
+* `metaM()`: Added `method="HamelCope"` to address [#133](https://github.com/fishR-Core-Team/FSA/issues/133). A few minor edits to documentation.
+* `psdAdd()`: Addressed bugs as described in [#136](https://github.com/fishR-Core-Team/FSA/issues/136)) and [#137](https://github.com/fishR-Core-Team/FSA/issues/137). Added `thesaurus` functionality. Reworked examples in documentation. Reworked testing framework. Thanks to Dave Glover.
+* `PSDlit`: Added info for Flier and Longear Sunfish to address [#122](https://github.com/fishR-Core-Team/FSA/issues/122)) and Northern Pikeminnow. Also updated information for Alabama Bass and Spotted Bass. Duplicated lines that combine `species` and `group` to partially address [#137](https://github.com/fishR-Core-Team/FSA/issues/137).
+* `psdVal()`: Added `dat=` to allow more flexibility when called from `psdAdd()`.
+* `PSDWRTest`: Added for testing PSD and relative weight functions.
+* `wrAdd()`: Addressed bugs similar to those for `psdAdd()`. Added `thesaurus` functionality. Reworked examples in documentation. Reworked testing framework (especially expanded validation of results with hand-calculations).
+* `wSlit`: Added info for Flier and Longear Sunfish to address [#122](https://github.com/fishR-Core-Team/FSA/issues/122)). Also updated information for Alabama Bass (further removed Spotted Bass (Alabama subspecies)), Spotted Bass, and Northern Pikeminnow (further removed Northern Squawfish (synonym of Northern Pikeminnow that is no longer used)). Duplicated lines that combine `species` and `group` to partially address [#137](https://github.com/fishR-Core-Team/FSA/issues/137).
+* `wsVal()`: Added `dat=` to allow more flexibility when called from `wrAdd()`.
+
 # FSA 0.10.0
 * Updated `test-coverage.yaml` and moved a `# nocov start` and `# nocov end` in `bootstrap.r` to address the errors with `test-coverage.yaml`. Addresses [#118](https://github.com/fishR-Core-Team/FSA/issues/118).
 * Removed `DescTools`, `plyr`, `psych` from Suggests (and all their uses in tests and linked code in documentation). Removed `ggplot2`, `marked`, `rcapture`, and `tibble` from Suggests (and use in examples was put in a `\dontrun()`).
@@ -122,11 +134,11 @@
 * `fitPlot()`: **REMOVED** (to `FSAmisc`).
 * `fsaNews()` and `FSANews()`: **Removed**.
 * `psdAdd()`: Modified. Changed the way `PSDlit` was loaded into the function environment so that `FSA::psdAdd()` will work. Addresses [#85](https://github.com/fishR-Core-Team/FSA/issues/85).
-* `PSDLit`: Modified. Added info for Utah Chub (from [here](https://webpages.uidaho.edu/quistlab/publications/NAJFM_2021_Black_et_al_UTC_Ws_length_categories.pdf); address [#84](https://github.com/fishR-Core-Team/FSA/issues/84)).
+* `PSDLit`: Modified. Added info for Utah Chub (from [here](https://www.usgs.gov/publications/proposed-standard-weight-ws-equation-and-length-categories-utah-chub); address [#84](https://github.com/fishR-Core-Team/FSA/issues/84)).
 * `psdVal()`: Modified. Changed the way `PSDlit` was loaded into the function environment so that `FSA::psdVal()` will work. Addresses [#85](https://github.com/fishR-Core-Team/FSA/issues/85).
 * `residPlot()`: **REMOVED** (to `FSAmisc`).
 * `wrAdd()`: Modified. Changed the way `WSlit` was loaded into the function environment so that `FSA::wrAdd()` will work. Addresses [#85](https://github.com/fishR-Core-Team/FSA/issues/85).
-* `WSLit`: Modified. Added info for Utah Chub (from [here](https://webpages.uidaho.edu/quistlab/publications/NAJFM_2021_Black_et_al_UTC_Ws_length_categories.pdf); address [#84](https://github.com/fishR-Core-Team/FSA/issues/84)).
+* `WSLit`: Modified. Added info for Utah Chub (from [here](https://www.usgs.gov/publications/proposed-standard-weight-ws-equation-and-length-categories-utah-chub); address [#84](https://github.com/fishR-Core-Team/FSA/issues/84)).
 * `wsVal()`: Modified. Changed the way `WSlit` was loaded into the function environment so that `FSA::wsVal()` will work. Addresses [#85](https://github.com/fishR-Core-Team/FSA/issues/85).
 
 # FSA 0.9.1
